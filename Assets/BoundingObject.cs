@@ -14,5 +14,3 @@ public abstract class BoundingObject : MonoBehaviour
         }
     }
 }
-
-// AABB (Axis-Aligned Bounding Box)

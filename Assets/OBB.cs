@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class BoundingBox : BoundingObject
+public class OBB : BoundingObject
 {
     public MyVector3 min;
     public MyVector3 max;
@@ -14,10 +14,8 @@ public class BoundingBox : BoundingObject
     {
         MyTransform thisTransform = GetComponent<MyGameObject>().myTransform;
         MyTransform otherTransform = other.GetComponent<MyGameObject>().myTransform;
-        if (other is BoundingBox)
+        if (other is OBB otherBox)
         {
-            BoundingBox otherBox = (BoundingBox)other;
-
             // Calculate the axes of both boxes
             MyVector3[] axes1 = GetAxes(thisTransform.rotation);
             MyVector3[] axes2 = GetAxes(otherTransform.rotation);
@@ -30,7 +28,7 @@ public class BoundingBox : BoundingObject
             BoundingSphere otherSphere = (BoundingSphere)other;
             MyVector3[] axes = GetAxes(thisTransform.rotation);
 
-    // Check for intersection on all axes
+            // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
             {
                 float radius = GetRadius(this, axes[i]);
@@ -52,7 +50,7 @@ public class BoundingBox : BoundingObject
         return axes;
     }
 
-    private bool IsSeparated(MyVector3[] axes1, MyVector3[] axes2, BoundingBox box1, BoundingBox box2)
+    private bool IsSeparated(MyVector3[] axes1, MyVector3[] axes2, OBB box1, OBB box2)
     {
         // Check for intersection on all axes
         for (int i = 0; i < 3; i++)
@@ -77,7 +75,7 @@ public class BoundingBox : BoundingObject
         return false;
     }
 
-    private bool IsSeparatedOnAxis(MyVector3 axis, BoundingBox box1, BoundingBox box2)
+    private bool IsSeparatedOnAxis(MyVector3 axis, OBB box1, OBB box2)
     {
         MyTransform box1Transform = box1.GetComponent<MyGameObject>().myTransform;
         MyTransform box2Transform = box2.GetComponent<MyGameObject>().myTransform;
@@ -87,20 +85,12 @@ public class BoundingBox : BoundingObject
         return distance > r1 + r2;
     }
 
-    private float GetRadius(BoundingBox box, MyVector3 axis)
+    private float GetRadius(OBB box, MyVector3 axis)
     {
         float r = 0;
         r += Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(box.max, box.min))) / 2;
         return r;
     }
-
-    private bool IsPointInside(MyVector3 point, MyVector3 min, MyVector3 max)
-    {
-        return point.x >= min.x && point.x <= max.x &&
-               point.y >= min.y && point.y <= max.y &&
-               point.z >= min.z && point.z <= max.z;
-    }
-
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
@@ -109,12 +99,12 @@ public class BoundingBox : BoundingObject
     }
 
     private void OnDrawGizmos()
-{
-    MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
-    Gizmos.color = Color.red;
-    MyVector3 center = myTransform.position;
-    MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x)*myTransform.scale.x, Mathf.Abs(max.y - min.y)*myTransform.scale.y, Mathf.Abs(max.z - min.z)*myTransform.scale.z);
-    Gizmos.matrix = Matrix4x4.TRS(center.ToUnityVector3(), myTransform.rotation.Normalize().ToUnityQuaternion(), Vector3.one);
-    Gizmos.DrawWireCube(Vector3.zero, size.ToUnityVector3());
+    {
+        MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
+        Gizmos.color = Color.red;
+        MyVector3 center = myTransform.position;
+        MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x)*myTransform.scale.x, Mathf.Abs(max.y - min.y)*myTransform.scale.y, Mathf.Abs(max.z - min.z)*myTransform.scale.z);
+        Gizmos.matrix = Matrix4x4.TRS(center.ToUnityVector3(), myTransform.rotation.Normalize().ToUnityQuaternion(), Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, size.ToUnityVector3());
     }
 }

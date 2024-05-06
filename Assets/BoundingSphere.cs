@@ -11,7 +11,7 @@ public class BoundingSphere : BoundingObject
 
     public override bool Intersects(BoundingObject other)
     {
-        if (other is BoundingBox)
+        if (other is OBB)
         {
             return other.Intersects(this);
         }
@@ -33,7 +33,8 @@ public class BoundingSphere : BoundingObject
 
     private void OnDrawGizmos()
     {
+        LateUpdate();
         Gizmos.color = Color.blue;
-       Gizmos.DrawWireSphere(worldCenter.ToUnityVector3(), worldRadius);
+        Gizmos.DrawWireSphere(worldCenter.ToUnityVector3(), worldRadius);
     }
 }
