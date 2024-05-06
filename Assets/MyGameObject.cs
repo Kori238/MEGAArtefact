@@ -6,13 +6,13 @@ using UnityEngine;
 
 public class MyGameObject : MonoBehaviour
 {
-    public MyTransform myTransform;
+    public MyTransform myTransform = new MyTransform();
     private MeshFilter meshFilter;
     Vector3[] initialVertices;
 
     private void Start()
     {
-        myTransform = new MyTransform();
+        transform.position = Vector3.zero;
         meshFilter = GetComponent<MeshFilter>();
         initialVertices = meshFilter.mesh.vertices;
     }
@@ -30,14 +30,13 @@ public class MyGameObject : MonoBehaviour
         for (int i = 0; i < vertices.Length; i++)
         {
             MyVector3 vertex = new MyVector3(initialVertices[i].x, initialVertices[i].y, initialVertices[i].z);
+            if (myTransform.GetLocalToWorldMatrix().IsSingular()) continue;
             vertex = myTransform.GetLocalToWorldMatrix().TransformPoint(vertex);
-            //Debug.Log(vertex);
             vertices[i] = vertex.ToUnityVector3(); 
         }
         meshFilter.mesh.SetVertices(vertices);
         meshFilter.mesh.RecalculateBounds();
         meshFilter.mesh.RecalculateNormals();
         meshFilter.mesh.RecalculateTangents();
-        Debug.Log(myTransform.GetLocalToWorldMatrix());
     }
 }

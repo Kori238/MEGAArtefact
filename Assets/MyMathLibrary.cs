@@ -565,6 +565,32 @@ public static MyMatrix4x4 CreateScale(MyVector3 scale)
     return matrix;
 }
 
+    public bool IsSingular()
+{
+    float det = Determinant();
+    return Mathf.Abs(det) < 0.000001f; // Check if determinant is close to zero
+}
+
+private float Determinant()
+{
+    var m = this;
+    float det =
+        m[0, 0] * (m[1, 1] * (m[2, 2] * m[3, 3] - m[2, 3] * m[3, 2]) -
+                    m[1, 2] * (m[2, 1] * m[3, 3] - m[2, 3] * m[3, 1]) +
+                    m[1, 3] * (m[2, 1] * m[3, 2] - m[2, 2] * m[3, 1])) -
+        m[0, 1] * (m[1, 0] * (m[2, 2] * m[3, 3] - m[2, 3] * m[3, 2]) -
+                    m[1, 2] * (m[2, 0] * m[3, 3] - m[2, 3] * m[3, 0]) +
+                    m[1, 3] * (m[2, 0] * m[3, 2] - m[2, 2] * m[3, 0])) +
+        m[0, 2] * (m[1, 0] * (m[2, 1] * m[3, 3] - m[2, 3] * m[3, 1]) -
+                    m[1, 1] * (m[2, 0] * m[3, 3] - m[2, 3] * m[3, 0]) +
+                    m[1, 3] * (m[2, 0] * m[3, 1] - m[2, 1] * m[3, 0])) -
+        m[0, 3] * (m[1, 0] * (m[2, 1] * m[3, 2] - m[2, 2] * m[3, 1]) -
+                    m[1, 1] * (m[2, 0] * m[3, 2] - m[2, 2] * m[3, 0]) +
+                    m[1, 2] * (m[2, 0] * m[3, 1] - m[2, 1] * m[3, 0]));
+
+    return det;
+}
+
     public MyQuaternion ToQuaternion()
     {
         var m = this;
@@ -716,7 +742,7 @@ public static MyMatrix4x4 CreateScale(MyVector3 scale)
         y = axis.y * sinHalfAngle;
         z = axis.z * sinHalfAngle;
     }
-
+    
     public MyQuaternion(MyVector3 position)
     {
         w = 0;
@@ -731,6 +757,24 @@ public static MyMatrix4x4 CreateScale(MyVector3 scale)
         this.y = y;
         this.z = z;
         this.w = w;
+    }
+
+    public Quaternion ToUnityQuaternion()
+        {
+            return new Quaternion(x, y, z, w); 
+        }
+
+    public MyQuaternion Normalize()
+    {
+        float magnitude = (float)Math.Sqrt(x * x + y * y + z * z + w * w);
+        if (magnitude > 0.00001f) // Avoid division by zero
+        {
+            x /= magnitude;
+            y /= magnitude;
+            z /= magnitude;
+            w /= magnitude;
+        }
+        return this;
     }
 
     public static MyQuaternion operator *(MyQuaternion a, MyQuaternion b)
