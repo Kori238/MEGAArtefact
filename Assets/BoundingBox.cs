@@ -28,12 +28,17 @@ public class BoundingBox : BoundingObject
         else if (other is BoundingSphere)
         {
             BoundingSphere otherSphere = (BoundingSphere)other;
+            MyVector3[] axes = GetAxes(thisTransform.rotation);
 
-            // Transform the sphere center to the box's local space
-            MyVector3 localCenter = thisTransform.rotation * MyVector3.Subtract(otherSphere.worldCenter, thisTransform.position);
-
-            // Check for intersection with the box
-            return IsPointInside(localCenter, min, max);
+    // Check for intersection on all axes
+            for (int i = 0; i < 3; i++)
+            {
+                float radius = GetRadius(this, axes[i]);
+                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, thisTransform.position)));
+                if (distance > radius + otherSphere.worldRadius)
+                    return false;
+            }
+            return true;
         }
         return false;
     }
