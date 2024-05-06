@@ -96,6 +96,21 @@ namespace MyMathLibrary
             this.z = z;
         }
 
+        public static MyVector3 right
+    {
+        get { return new MyVector3(1f, 0f, 0f); }
+    }
+
+    public static MyVector3 up
+    {
+        get { return new MyVector3(0f, 1f, 0f); }
+    }
+
+    public static MyVector3 forward
+    {
+        get { return new MyVector3(0f, 0f, 1f); }
+    }
+
         // Static Functions
         public static MyVector3 Add(MyVector3 a, MyVector3 b)
         {
@@ -784,6 +799,26 @@ private float Determinant()
             a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
             a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,
             a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w);
+    }
+    public static MyVector3 operator *(MyQuaternion quat, MyVector3 vec)
+    {
+        float num = quat.x * 2f;
+        float num2 = quat.y * 2f;
+        float num3 = quat.z * 2f;
+        float num4 = quat.x * num;
+        float num5 = quat.y * num2;
+        float num6 = quat.z * num3;
+        float num7 = quat.x * num2;
+        float num8 = quat.x * num3;
+        float num9 = quat.y * num3;
+        float num10 = quat.w * num;
+        float num11 = quat.w * num2;
+        float num12 = quat.w * num3;
+        MyVector3 result;
+        result.x = (1f - (num5 + num6)) * vec.x + (num7 - num12) * vec.y + (num8 + num11) * vec.z;
+        result.y = (num7 + num12) * vec.x + (1f - (num4 + num6)) * vec.y + (num9 - num10) * vec.z;
+        result.z = (num8 - num11) * vec.x + (num9 + num10) * vec.y + (1f - (num4 + num5)) * vec.z;
+        return result;
     }
 
     public MyQuaternion Inverse()

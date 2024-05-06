@@ -18,8 +18,8 @@ public class BoundingSphere : BoundingObject
         else if (other is BoundingSphere)
         {
             BoundingSphere otherSphere = (BoundingSphere)other;
-            MyVector3 distance = MyVector3.Subtract(center, otherSphere.center);
-            return MyVector3.MagnitudeSquared(distance) <= (radius + otherSphere.radius) * (radius + otherSphere.radius);
+            MyVector3 distance = MyVector3.Subtract(worldCenter, otherSphere.worldCenter);
+            return MyVector3.MagnitudeSquared(distance) <= (worldRadius + otherSphere.worldRadius) * (worldRadius + otherSphere.worldRadius);
         }
         return false;
     }
