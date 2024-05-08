@@ -21,6 +21,10 @@ public class BoundingSphere : BoundingObject
             MyVector3 distance = MyVector3.Subtract(worldCenter, otherSphere.worldCenter);
             return MyVector3.MagnitudeSquared(distance) <= (worldRadius + otherSphere.worldRadius) * (worldRadius + otherSphere.worldRadius);
         }
+        else if (other is AABB)
+        {
+            return other.Intersects(this);
+        }
         return false;
     }
 

@@ -1,7 +1,5 @@
 using MyMathLibrary;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MyGameObject : MonoBehaviour
@@ -10,18 +8,17 @@ public class MyGameObject : MonoBehaviour
     private MeshFilter meshFilter;
     Vector3[] initialVertices;
 
-    private void Start()
+    private void Awake()
     {
         transform.position = Vector3.zero;
         meshFilter = GetComponent<MeshFilter>();
         initialVertices = meshFilter.mesh.vertices;
-    }
-
-    // Update is called once per frame
-
-    public void Update()
-    {
-        
+        List<MyGameObject> includes = new List<MyGameObject>();
+        foreach (MyGameObject mgo in myTransform.children)
+        {
+            includes.Add(mgo.myTransform.SetParent(this));
+        }
+        myTransform.children.AddRange(includes);
     }
 
     void LateUpdate()

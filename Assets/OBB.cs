@@ -3,13 +3,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class OBB : BoundingObject
+public class OBB : BoundingBox
 {
-    public MyVector3 min;
-    public MyVector3 max;
-    public MyVector3 worldMax;
-    public MyVector3 worldMin;
-
     public override bool Intersects(BoundingObject other)
     {
         MyTransform thisTransform = GetComponent<MyGameObject>().myTransform;
@@ -38,19 +33,22 @@ public class OBB : BoundingObject
             }
             return true;
         }
+        else if (other is AABB otherAABB)
+        {
+           // Calculate the axes of this box
+            MyVector3[] axes1 = GetAxes(thisTransform.rotation);
+
+            // Calculate the axes of the AABB
+            MyVector3[] axes2 = new MyVector3[] { MyVector3.right, MyVector3.up, MyVector3.forward };
+
+            // Check for intersection on all axes
+            return IsSeparated(axes1, axes2, this, otherAABB) == false;
+        }
+
         return false;
     }
 
-    private MyVector3[] GetAxes(MyQuaternion rotation)
-    {
-        MyVector3[] axes = new MyVector3[3];
-        axes[0] = rotation * MyVector3.right;
-        axes[1] = rotation * MyVector3.up;
-        axes[2] = rotation * MyVector3.forward;
-        return axes;
-    }
-
-    private bool IsSeparated(MyVector3[] axes1, MyVector3[] axes2, OBB box1, OBB box2)
+    private bool IsSeparated(MyVector3[] axes1, MyVector3[] axes2, BoundingBox box1, BoundingBox box2)
     {
         // Check for intersection on all axes
         for (int i = 0; i < 3; i++)
@@ -75,22 +73,39 @@ public class OBB : BoundingObject
         return false;
     }
 
-    private bool IsSeparatedOnAxis(MyVector3 axis, OBB box1, OBB box2)
+    private bool IsSeparatedOnAxis(MyVector3 axis, BoundingBox box1, BoundingBox box2)
     {
-        MyTransform box1Transform = box1.GetComponent<MyGameObject>().myTransform;
-        MyTransform box2Transform = box2.GetComponent<MyGameObject>().myTransform;
         float r1 = GetRadius(box1, axis);
         float r2 = GetRadius(box2, axis);
-        float distance = Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(box1Transform.position, box2Transform.position)));
+        MyVector3 center1 = box1.GetComponent<MyGameObject>().myTransform.position;
+        MyVector3 center2 = box2.GetComponent<MyGameObject>().myTransform.position;
+        float distance = Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(center1, center2)));
         return distance > r1 + r2;
     }
 
-    private float GetRadius(OBB box, MyVector3 axis)
+    private float GetRadius(BoundingBox box, MyVector3 axis)
     {
+        MyVector3[] axes = GetAxes(box.GetComponent<MyGameObject>().myTransform.rotation);
+        MyVector3 boxSize = new MyVector3 (
+            Mathf.Abs(box.worldMax.x) + Mathf.Abs(box.worldMin.x),
+            Mathf.Abs(box.worldMax.y) + Mathf.Abs(box.worldMin.y),
+            Mathf.Abs(box.worldMax.z) + Mathf.Abs(box.worldMin.z)
+            );
         float r = 0;
-        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(box.max, box.min))) / 2;
+        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[0], boxSize.x))) / 2;
+        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[1], boxSize.y))) / 2;
+        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[2], boxSize.z))) / 2;
         return r;
     }
+    private MyVector3[] GetAxes(MyQuaternion rotation)
+    {
+        MyVector3[] axes = new MyVector3[3];
+        axes[0] = rotation * MyVector3.right;
+        axes[1] = rotation * MyVector3.up;
+        axes[2] = rotation * MyVector3.forward;
+        return axes;
+    }
+
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
