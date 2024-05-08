@@ -12,8 +12,8 @@ public class OBB : BoundingBox
         if (other is OBB otherBox)
         {
             // Calculate the axes of both boxes
-            MyVector3[] axes1 = GetAxes(thisTransform.rotation);
-            MyVector3[] axes2 = GetAxes(otherTransform.rotation);
+            MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes2 = GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Check for intersection on all axes
             return IsSeparated(axes1, axes2, this, otherBox) == false;
@@ -21,7 +21,7 @@ public class OBB : BoundingBox
         else if (other is BoundingSphere)
         {
             BoundingSphere otherSphere = (BoundingSphere)other;
-            MyVector3[] axes = GetAxes(thisTransform.rotation);
+            MyVector3[] axes = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
@@ -36,7 +36,7 @@ public class OBB : BoundingBox
         else if (other is AABB otherAABB)
         {
            // Calculate the axes of this box
-            MyVector3[] axes1 = GetAxes(thisTransform.rotation);
+            MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Calculate the axes of the AABB
             MyVector3[] axes2 = new MyVector3[] { MyVector3.right, MyVector3.up, MyVector3.forward };
@@ -77,15 +77,15 @@ public class OBB : BoundingBox
     {
         float r1 = GetRadius(box1, axis);
         float r2 = GetRadius(box2, axis);
-        MyVector3 center1 = box1.GetComponent<MyGameObject>().myTransform.position;
-        MyVector3 center2 = box2.GetComponent<MyGameObject>().myTransform.position;
+        MyVector3 center1 = box1.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetPosition();
+        MyVector3 center2 = box2.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetPosition();
         float distance = Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(center1, center2)));
         return distance > r1 + r2;
     }
 
     private float GetRadius(BoundingBox box, MyVector3 axis)
     {
-        MyVector3[] axes = GetAxes(box.GetComponent<MyGameObject>().myTransform.rotation);
+        MyVector3[] axes = GetAxes(box.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetRotation());
         MyVector3 boxSize = new MyVector3 (
             Mathf.Abs(box.worldMax.x) + Mathf.Abs(box.worldMin.x),
             Mathf.Abs(box.worldMax.y) + Mathf.Abs(box.worldMin.y),
@@ -117,9 +117,10 @@ public class OBB : BoundingBox
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         Gizmos.color = Color.red;
-        MyVector3 center = myTransform.position;
-        MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x)*myTransform.scale.x, Mathf.Abs(max.y - min.y)*myTransform.scale.y, Mathf.Abs(max.z - min.z)*myTransform.scale.z);
-        Gizmos.matrix = Matrix4x4.TRS(center.ToUnityVector3(), myTransform.rotation.Normalize().ToUnityQuaternion(), Vector3.one);
+        MyMatrix4x4 localTransformation = myTransform.GetLocalToWorldMatrix();
+        MyVector3 scale = localTransformation.GetScale();
+        MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x)*scale.x, Mathf.Abs(max.y - min.y)*scale.y, Mathf.Abs(max.z - min.z)*scale.z);
+        Gizmos.matrix = Matrix4x4.TRS(localTransformation.GetPosition().ToUnityVector3(), localTransformation.GetRotation().Normalize().ToUnityQuaternion(), Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, size.ToUnityVector3());
     }
 }

@@ -28,6 +28,11 @@ public class BoundingSphere : BoundingObject
         return false;
     }
 
+    private void Start()
+    {
+        
+    }
+
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;

@@ -17,8 +17,9 @@ public abstract class BoundingObject : MonoBehaviour
 
 public abstract class BoundingBox : BoundingObject
 {
-    public MyVector3 min;
-    public MyVector3 max;
+    public MyVector3 min = new MyVector3(-0.5f, -0.5f, -0.5f);
+    public MyVector3 max = new MyVector3(0.5f, 0.5f, 0.5f);
     public MyVector3 worldMin;
     public MyVector3 worldMax;
+
 }
