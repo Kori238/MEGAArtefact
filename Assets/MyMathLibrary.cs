@@ -477,7 +477,7 @@ public static MyMatrix4x4 CreateScale(MyVector3 scale)
     public MyQuaternion GetRotation()
     {
         var rotationMatrix = this.GetRotationMatrix();
-        return rotationMatrix.ToQuaternion();
+        return NormalizeRotationMatrix(rotationMatrix).ToQuaternion();
     }
 
     public void Scale(MyVector3 scale)

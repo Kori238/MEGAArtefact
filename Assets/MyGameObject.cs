@@ -1,39 +1,81 @@
 using MyMathLibrary;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class MyGameObject : MonoBehaviour
 {
     public MyTransform myTransform = new MyTransform();
     private MeshFilter meshFilter;
-    Vector3[] initialVertices;
+    public Mesh originalMesh;
 
     private void Awake()
     {
-        transform.position = Vector3.zero;
         meshFilter = GetComponent<MeshFilter>();
-        initialVertices = meshFilter.mesh.vertices;
+        if (originalMesh == null)
+        {
+            originalMesh = meshFilter.sharedMesh;
+        }
+        meshFilter.sharedMesh = Instantiate(originalMesh);
+
         List<MyGameObject> includes = new List<MyGameObject>();
         foreach (MyGameObject mgo in myTransform.children)
         {
+            if (mgo == null) continue;
             includes.Add(mgo.myTransform.SetParent(this));
         }
         myTransform.children.AddRange(includes);
     }
 
-    void LateUpdate()
+    /*private void OnValidate()
     {
-        Vector3[] vertices = meshFilter.mesh.vertices;
-        for (int i = 0; i < vertices.Length; i++)
+        meshFilter = GetComponent<MeshFilter>();
+        meshFilter.mesh = Instantiate(originalMesh);
+        if (Application.isEditor && !Application.isPlaying)
         {
-            MyVector3 vertex = new MyVector3(initialVertices[i].x, initialVertices[i].y, initialVertices[i].z);
-            if (myTransform.GetLocalToWorldMatrix().IsSingular()) continue;
-            vertex = myTransform.GetLocalToWorldMatrix().TransformPoint(vertex);
-            vertices[i] = vertex.ToUnityVector3(); 
+            if (meshFilter != null && meshFilter.sharedMesh != null)
+            {
+                if (initialVertices == null)
+                {
+                    initialVertices = meshFilter.sharedMesh.vertices;
+                } else
+                {
+                    TransformMesh();
+                }
+            }
         }
-        meshFilter.mesh.SetVertices(vertices);
-        meshFilter.mesh.RecalculateBounds();
-        meshFilter.mesh.RecalculateNormals();
-        meshFilter.mesh.RecalculateTangents();
+    }*/
+
+    private void TransformMesh()
+    {
+        if (meshFilter != null && meshFilter.sharedMesh != null)
+        {
+            Vector3[] vertices = originalMesh.vertices;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                MyVector3 vertex = new MyVector3(originalMesh.vertices[i].x, originalMesh.vertices[i].y, originalMesh.vertices[i].z);
+                if (myTransform.GetLocalToWorldMatrix().IsSingular()) continue;
+                vertex = myTransform.GetLocalToWorldMatrix().TransformPoint(vertex);
+                vertices[i] = vertex.ToUnityVector3(); 
+            }
+            meshFilter.sharedMesh.SetVertices(vertices);
+            meshFilter.sharedMesh.RecalculateBounds();
+            meshFilter.sharedMesh.RecalculateNormals();
+            meshFilter.sharedMesh.RecalculateTangents();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        TransformMesh();
+        List<MyGameObject> includes = new List<MyGameObject>();
+        foreach (MyGameObject mgo in myTransform.children)
+        {
+            if (mgo == null) continue;
+            includes.Add(mgo.myTransform.SetParent(this));
+        }
+        myTransform.children.AddRange(includes);
     }
 }

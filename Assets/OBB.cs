@@ -120,7 +120,7 @@ public class OBB : BoundingBox
         MyMatrix4x4 localTransformation = myTransform.GetLocalToWorldMatrix();
         MyVector3 scale = localTransformation.GetScale();
         MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x)*scale.x, Mathf.Abs(max.y - min.y)*scale.y, Mathf.Abs(max.z - min.z)*scale.z);
-        Gizmos.matrix = Matrix4x4.TRS(localTransformation.GetPosition().ToUnityVector3(), localTransformation.GetRotation().Normalize().ToUnityQuaternion(), Vector3.one);
+        Gizmos.matrix = Matrix4x4.TRS(localTransformation.GetPosition().ToUnityVector3(), localTransformation.GetRotation().Normalize().ToUnityQuaternion().normalized, Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, size.ToUnityVector3());
     }
 }
