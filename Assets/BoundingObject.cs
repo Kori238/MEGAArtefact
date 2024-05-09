@@ -1,6 +1,7 @@
 using MyMathLibrary;
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public abstract class BoundingObject : MonoBehaviour
 {
@@ -32,17 +33,17 @@ public abstract class BoundingObject : MonoBehaviour
         MyTransform thisTransform = GetComponent<MyGameObject>().myTransform;
         MyTransform otherTransform = other.GetComponent<MyGameObject>().myTransform;
 
-        MyVector3 distance = MyVector3.Subtract(thisTransform.position, otherTransform.position);
+        MyVector3 distance = MyVector3.Subtract(thisTransform.GetLocalToWorldMatrix().GetPosition(), otherTransform.GetLocalToWorldMatrix().GetPosition());
         MyVector3 direction = MyVector3.Normalize(distance);
 
-        MyVector3[] axes1 = GetAxes(thisTransform.rotation);
-        MyVector3[] axes2 = other.GetAxes(otherTransform.rotation);
+        MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
+        MyVector3[] axes2 = other.GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
 
         // Transform the local axes into world space
         for (int i = 0; i < 3; i++)
         {
-            axes1[i] = thisTransform.rotation * axes1[i];
-            axes2[i] = otherTransform.rotation * axes2[i];
+            axes1[i] = thisTransform.GetLocalToWorldMatrix().GetRotation() * axes1[i];
+            axes2[i] = otherTransform.GetLocalToWorldMatrix().GetRotation() * axes2[i];
         }
 
         float minOverlap = float.MaxValue;
@@ -103,7 +104,7 @@ public abstract class BoundingBox : BoundingObject
 
     public override float GetRadius(MyVector3 axis)
     {
-        MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.rotation);
+        MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetRotation());
         MyVector3 boxSize = new MyVector3 (
             this.worldMax.x - this.worldMin.x,
             this.worldMax.y - this.worldMin.y,
