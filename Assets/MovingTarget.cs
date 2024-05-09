@@ -9,8 +9,8 @@ public class MovingTarget : MonoBehaviour
     public MyVector3 min_scale = new MyVector3(1, 1, 1);
     public float max_height = 5f;
     public float min_height = -5f;
-    public MyVector3 scaling = new MyVector3(0.001f, 0.001f, 0.001f);
-    public MyVector3 translating = new MyVector3(0, 0.01f, 0);
+    public MyVector3 scaling = new MyVector3(1f, 1f, 1f);
+    public MyVector3 translating = new MyVector3(0, 1f, 0);
 
     void Start()
     {
@@ -21,9 +21,9 @@ public class MovingTarget : MonoBehaviour
     void Update()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
-        myTransform.position = MyVector3.Add(myTransform.position, translating);
-        myTransform.rotation *= new MyQuaternion(Mathf.PI / 2 * 0.001f, new MyVector3(1, 1, 1)).Normalize();
-        myTransform.scale = MyVector3.Add(myTransform.scale, scaling);
+        myTransform.position = MyVector3.Add(myTransform.position, MyVector3.Multiply(translating, Time.deltaTime));
+        myTransform.rotation *= new MyQuaternion(Mathf.PI / 2 * Time.deltaTime, new MyVector3(1, 1, 1)).Normalize();
+        myTransform.scale = MyVector3.Add(myTransform.scale,  MyVector3.Multiply(scaling, Time.deltaTime));
         if ((myTransform.scale.x > max_scale.x && scaling.x > 0) ||
             (myTransform.scale.x < min_scale.x && scaling.x < 0))
         {

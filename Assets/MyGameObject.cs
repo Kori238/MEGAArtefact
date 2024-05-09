@@ -1,7 +1,5 @@
 using MyMathLibrary;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -19,14 +17,6 @@ public class MyGameObject : MonoBehaviour
             originalMesh = meshFilter.sharedMesh;
         }
         meshFilter.sharedMesh = Instantiate(originalMesh);
-
-        List<MyGameObject> includes = new List<MyGameObject>();
-        foreach (MyGameObject mgo in myTransform.children)
-        {
-            if (mgo == null) continue;
-            includes.Add(mgo.myTransform.SetParent(this));
-        }
-        myTransform.children.AddRange(includes);
     }
 
     /*private void OnValidate()
@@ -76,6 +66,10 @@ public class MyGameObject : MonoBehaviour
             if (mgo == null) continue;
             includes.Add(mgo.myTransform.SetParent(this));
         }
-        myTransform.children.AddRange(includes);
+        foreach (MyGameObject mgo in includes) 
+        {
+            if (mgo == null) continue;
+            myTransform.children.Add(mgo);
+        }
     }
 }

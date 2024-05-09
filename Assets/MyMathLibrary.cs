@@ -943,7 +943,7 @@ private float Determinant()
             this.parent.myTransform.children.Remove(gameObject);
         }
         this.parent = gameObject;
-        if (parent != null && !parent.myTransform.children.Contains(this.gameObject))
+        if (parent != null && this.gameObject != null && !parent.myTransform.children.Contains(this.gameObject))
         {
             return this.gameObject;
         }
