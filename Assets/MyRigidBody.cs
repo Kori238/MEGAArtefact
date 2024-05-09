@@ -43,13 +43,17 @@ public class MyRigidBody : MonoBehaviour
             angularVelocity = MyVector3.Multiply(angularVelocity, (1 - angularDrag * Time.deltaTime));
 
             // Update position and rotation
-            myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(velocity, Time.deltaTime));
-            myGameObject.myTransform.rotation = new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime)) * myGameObject.myTransform.rotation;
-
             // Reset forces
             force = MyVector3.zero;
             torque = MyVector3.zero;
         }
+    }
+
+    private void Update()
+    {
+        myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(velocity, Time.deltaTime));
+        myGameObject.myTransform.rotation = myGameObject.myTransform.rotation * new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime));
+        
     }
 
     public void AddForce(MyVector3 force)
@@ -70,7 +74,6 @@ public class MyRigidBody : MonoBehaviour
     public void OnBoundingEnter(BoundingObject other, MyVector3 collisionNormal, float penetrationDepth)
     {
         Debug.Log($"CollisionNormal: {collisionNormal} PenetrationDepth: {penetrationDepth}");
-
         // Calculate the velocity along the collision normal
         MyVector3 velocityAlongNormal = MyVector3.Multiply(collisionNormal, MyVector3.Dot(collisionNormal, velocity));
 
@@ -79,13 +82,16 @@ public class MyRigidBody : MonoBehaviour
 
         // Apply restitution to the velocity along the collision normal
         float restitution = 0.3f; // Adjust this value to control the amount of restitution
-        float damping = 0.3f;
         velocityAlongNormal = MyVector3.Multiply(velocityAlongNormal, -restitution);
 
         // Combine the velocities to get the new velocity
         velocity = MyVector3.Add(velocityPerpendicularToNormal, velocityAlongNormal);
 
-        AddImpulse(MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(collisionNormal, penetrationDepth * 1-damping)));
-        force = MyVector3.zero;
+        // Resolve the collision by modifying the position
+        myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(collisionNormal, penetrationDepth));
+        if (MyVector3.Dot(collisionNormal, MyVector3.up) > 0)
+        {
+            velocity.y = 0;
+        }
     }
 }

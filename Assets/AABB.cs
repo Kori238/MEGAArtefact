@@ -1,5 +1,6 @@
 using MyMathLibrary;
 using System;
+using System.Threading;
 using UnityEngine;
 
 public class AABB : BoundingBox
@@ -33,19 +34,29 @@ public class AABB : BoundingBox
         }
         return false;
     }        
+    public override MyVector3[] GetAxes(MyQuaternion rotation)
+    {
+        MyVector3[] axes = new MyVector3[3];
+        axes[0] = MyVector3.right;
+        axes[1] = MyVector3.up;
+        axes[2] = MyVector3.forward;
+        return axes;
+    }
 
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         MyMatrix4x4 localToWorldMatrix = myTransform.GetLocalToWorldMatrix();
+        localToWorldMatrix = localToWorldMatrix * MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix());
         worldMin = localToWorldMatrix.TransformPoint(min);
         worldMax = localToWorldMatrix.TransformPoint(max);
     }
 
     private void OnDrawGizmos()
     {
+        MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         LateUpdate();
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(MyVector3.Lerp(worldMin, worldMax, 0.5f).ToUnityVector3(), MyVector3.Subtract(worldMax, worldMin).ToUnityVector3());
+        Gizmos.DrawWireCube(MyVector3.Lerp(worldMin, worldMax, 0.5f).ToUnityVector3(), myTransform.GetLocalToWorldMatrix().GetScale().ToUnityVector3());
     }
 }

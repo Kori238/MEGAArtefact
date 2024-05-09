@@ -12,7 +12,7 @@ public abstract class BoundingObject : MonoBehaviour
 
     public abstract float GetRadius(MyVector3 axis);
 
-    private void FixedUpdate()
+    private void Update()
     {
         foreach (BoundingObject obj in GameObject.FindObjectsOfType<BoundingObject>())
         {
@@ -32,11 +32,18 @@ public abstract class BoundingObject : MonoBehaviour
         MyTransform thisTransform = GetComponent<MyGameObject>().myTransform;
         MyTransform otherTransform = other.GetComponent<MyGameObject>().myTransform;
 
-        MyVector3 distance = MyVector3.Subtract(otherTransform.position, thisTransform.position);
+        MyVector3 distance = MyVector3.Subtract(thisTransform.position, otherTransform.position);
         MyVector3 direction = MyVector3.Normalize(distance);
 
         MyVector3[] axes1 = GetAxes(thisTransform.rotation);
         MyVector3[] axes2 = other.GetAxes(otherTransform.rotation);
+
+        // Transform the local axes into world space
+        for (int i = 0; i < 3; i++)
+        {
+            axes1[i] = thisTransform.rotation * axes1[i];
+            axes2[i] = otherTransform.rotation * axes2[i];
+        }
 
         float minOverlap = float.MaxValue;
         MyVector3 collisionNormal = MyVector3.zero;
@@ -61,11 +68,11 @@ public abstract class BoundingObject : MonoBehaviour
             }
         }
 
-        // Make sure the collision normal is pointing in the correct direction
-        //if (MyVector3.Dot(collisionNormal, direction) < 0)
-        //{
-        //    collisionNormal = MyVector3.Multiply(collisionNormal, -1);
-        //}
+        //Make sure the collision normal is pointing in the correct direction
+        if (MyVector3.Dot(collisionNormal, direction) < 0)
+        {
+            collisionNormal = MyVector3.Multiply(collisionNormal, -1);
+        }
 
         return collisionNormal;
     }
@@ -96,11 +103,11 @@ public abstract class BoundingBox : BoundingObject
 
     public override float GetRadius(MyVector3 axis)
     {
-        MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetRotation());
+        MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.rotation);
         MyVector3 boxSize = new MyVector3 (
-            Mathf.Abs(this.worldMax.x) + Mathf.Abs(this.worldMin.x),
-            Mathf.Abs(this.worldMax.y) + Mathf.Abs(this.worldMin.y),
-            Mathf.Abs(this.worldMax.z) + Mathf.Abs(this.worldMin.z)
+            this.worldMax.x - this.worldMin.x,
+            this.worldMax.y - this.worldMin.y,
+            this.worldMax.z - this.worldMin.z
             );
         float r = 0;
         r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[0], boxSize.x))) / 2;

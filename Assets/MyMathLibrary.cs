@@ -781,7 +781,7 @@ private float Determinant()
     
     public MyQuaternion(MyVector3 position)
     {
-        w = 0;
+        w = 1;
         x = position.x;
         y = position.y;
         z = position.z;
@@ -794,7 +794,6 @@ private float Determinant()
         this.z = z;
         this.w = w;
     }
-
     public Quaternion ToUnityQuaternion()
         {
             return new Quaternion(x, y, z, w); 
@@ -930,7 +929,6 @@ private float Determinant()
     public MyVector3 position;
     public MyQuaternion rotation;
     public MyVector3 scale;
-
     public MyGameObject parent;
     public List<MyGameObject> children = new List<MyGameObject>();
     public MyGameObject gameObject;

@@ -12,8 +12,8 @@ public class OBB : BoundingBox
         if (other is OBB otherBox)
         {
             // Calculate the axes of both boxes
-            MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
-            MyVector3[] axes2 = GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes1 = GetAxes(thisTransform.rotation);
+            MyVector3[] axes2 = GetAxes(otherTransform.rotation);
 
             // Check for intersection on all axes
             return IsSeparated(axes1, axes2, this, otherBox) == false;
@@ -21,7 +21,7 @@ public class OBB : BoundingBox
         else if (other is BoundingSphere)
         {
             BoundingSphere otherSphere = (BoundingSphere)other;
-            MyVector3[] axes = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes = GetAxes(thisTransform.rotation);
 
             // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
@@ -88,18 +88,20 @@ public class OBB : BoundingBox
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
-        worldMax = myTransform.GetLocalToWorldMatrix().TransformPoint(max);
-        worldMin = myTransform.GetLocalToWorldMatrix().TransformPoint(min);
+        MyMatrix4x4 localToWorldMatrix = myTransform.GetLocalToWorldMatrix();
+        worldMin = localToWorldMatrix.TransformPoint(min);
+        worldMax = localToWorldMatrix.TransformPoint(max);
     }
 
     private void OnDrawGizmos()
     {
+        LateUpdate();
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         Gizmos.color = Color.red;
         MyMatrix4x4 localTransformation = myTransform.GetLocalToWorldMatrix();
-        MyVector3 scale = localTransformation.GetScale();
-        MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x)*scale.x, Mathf.Abs(max.y - min.y)*scale.y, Mathf.Abs(max.z - min.z)*scale.z);
-        Gizmos.matrix = Matrix4x4.TRS(localTransformation.GetPosition().ToUnityVector3(), localTransformation.GetRotation().Normalize().ToUnityQuaternion().normalized, Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, size.ToUnityVector3());
+        MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y), Mathf.Abs(max.z - min.z));
+        size = MyVector3.Multiply(size, myTransform.GetLocalToWorldMatrix().GetScale());
+        Gizmos.matrix = Matrix4x4.TRS(localTransformation.GetPosition().ToUnityVector3(), localTransformation.GetRotation().Normalize().ToUnityQuaternion(), size.ToUnityVector3());
+        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
     }
 }
