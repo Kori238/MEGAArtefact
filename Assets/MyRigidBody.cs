@@ -44,7 +44,7 @@ public class MyRigidBody : MonoBehaviour
 
             // Update position and rotation
             myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(velocity, Time.deltaTime));
-            myGameObject.myTransform.rotation *= new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime));
+            myGameObject.myTransform.rotation = new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime)) * myGameObject.myTransform.rotation;
 
             // Reset forces
             force = MyVector3.zero;
@@ -70,8 +70,22 @@ public class MyRigidBody : MonoBehaviour
     public void OnBoundingEnter(BoundingObject other, MyVector3 collisionNormal, float penetrationDepth)
     {
         Debug.Log($"CollisionNormal: {collisionNormal} PenetrationDepth: {penetrationDepth}");
-        myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(collisionNormal, penetrationDepth / 50));
+
+        // Calculate the velocity along the collision normal
+        MyVector3 velocityAlongNormal = MyVector3.Multiply(collisionNormal, MyVector3.Dot(collisionNormal, velocity));
+
+        // Calculate the velocity perpendicular to the collision normal
+        MyVector3 velocityPerpendicularToNormal = MyVector3.Subtract(velocity, velocityAlongNormal);
+
+        // Apply restitution to the velocity along the collision normal
+        float restitution = 0.3f; // Adjust this value to control the amount of restitution
+        float damping = 0.3f;
+        velocityAlongNormal = MyVector3.Multiply(velocityAlongNormal, -restitution);
+
+        // Combine the velocities to get the new velocity
+        velocity = MyVector3.Add(velocityPerpendicularToNormal, velocityAlongNormal);
+
+        AddImpulse(MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(collisionNormal, penetrationDepth * 1-damping)));
         force = MyVector3.zero;
-        velocity = MyVector3.zero;
     }
 }

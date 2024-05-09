@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            body.AddImpulse(new MyMathLibrary.MyVector3(0, 10, 0));
+            body.AddImpulse(new MyMathLibrary.MyVector3(0, 100, 0));
         }
     }
 }

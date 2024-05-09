@@ -12,6 +12,7 @@ public class MyGameObject : MonoBehaviour
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
+        if (meshFilter == null) return;
         if (originalMesh == null)
         {
             originalMesh = meshFilter.sharedMesh;
@@ -59,7 +60,7 @@ public class MyGameObject : MonoBehaviour
 
     private void LateUpdate()
     {
-        TransformMesh();
+        if (meshFilter != null) TransformMesh();
         List<MyGameObject> includes = new List<MyGameObject>();
         foreach (MyGameObject mgo in myTransform.children)
         {

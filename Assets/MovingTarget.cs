@@ -22,7 +22,7 @@ public class MovingTarget : MonoBehaviour
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         myTransform.position = MyVector3.Add(myTransform.position, MyVector3.Multiply(translating, Time.deltaTime));
-        myTransform.rotation *= new MyQuaternion(Mathf.PI / 2 * Time.deltaTime, new MyVector3(1, 1, 1)).Normalize();
+        myTransform.rotation *= new MyQuaternion(Mathf.PI / 2 * Time.deltaTime, new MyVector3(0, 1, 0)).Normalize();
         myTransform.scale = MyVector3.Add(myTransform.scale,  MyVector3.Multiply(scaling, Time.deltaTime));
         if ((myTransform.scale.x > max_scale.x && scaling.x > 0) ||
             (myTransform.scale.x < min_scale.x && scaling.x < 0))
