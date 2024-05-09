@@ -97,20 +97,40 @@ namespace MyMathLibrary
             this.z = z;
         }
 
+        public static MyVector3 zero
+        {
+            get { return new MyVector3(0f, 0f, 0f); }
+        }
+
         public static MyVector3 right
-    {
-        get { return new MyVector3(1f, 0f, 0f); }
-    }
+        {
+            get { return new MyVector3(1f, 0f, 0f); }
+        }
 
-    public static MyVector3 up
-    {
-        get { return new MyVector3(0f, 1f, 0f); }
-    }
+        public static MyVector3 left
+        {
+            get { return new MyVector3(-1f, 0f, 0f); }
+        }
 
-    public static MyVector3 forward
-    {
-        get { return new MyVector3(0f, 0f, 1f); }
-    }
+        public static MyVector3 up
+        {
+            get { return new MyVector3(0f, 1f, 0f); }
+        }
+
+        public static MyVector3 down
+        {
+            get { return new MyVector3(0f, -1f, 0f); }
+        }
+
+        public static MyVector3 forward
+        {
+            get { return new MyVector3(0f, 0f, 1f); }
+        }
+
+        public static MyVector3 backward
+        {
+            get { return new MyVector3(0f, 0f, -1f); }
+        }
 
         // Static Functions
         public static MyVector3 Add(MyVector3 a, MyVector3 b)

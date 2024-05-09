@@ -26,7 +26,7 @@ public class OBB : BoundingBox
             // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
             {
-                float radius = GetRadius(this, axes[i]);
+                float radius = GetRadius(axes[i]);
                 float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, thisTransform.position)));
                 if (distance > radius + otherSphere.worldRadius)
                     return false;
@@ -75,36 +75,15 @@ public class OBB : BoundingBox
 
     private bool IsSeparatedOnAxis(MyVector3 axis, BoundingBox box1, BoundingBox box2)
     {
-        float r1 = GetRadius(box1, axis);
-        float r2 = GetRadius(box2, axis);
+        float r1 = box1.GetRadius(axis);
+        float r2 = box2.GetRadius(axis);
         MyVector3 center1 = box1.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetPosition();
         MyVector3 center2 = box2.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetPosition();
         float distance = Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(center1, center2)));
         return distance > r1 + r2;
     }
 
-    private float GetRadius(BoundingBox box, MyVector3 axis)
-    {
-        MyVector3[] axes = GetAxes(box.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetRotation());
-        MyVector3 boxSize = new MyVector3 (
-            Mathf.Abs(box.worldMax.x) + Mathf.Abs(box.worldMin.x),
-            Mathf.Abs(box.worldMax.y) + Mathf.Abs(box.worldMin.y),
-            Mathf.Abs(box.worldMax.z) + Mathf.Abs(box.worldMin.z)
-            );
-        float r = 0;
-        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[0], boxSize.x))) / 2;
-        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[1], boxSize.y))) / 2;
-        r += Math.Abs(MyVector3.Dot(axis, MyVector3.Multiply(axes[2], boxSize.z))) / 2;
-        return r;
-    }
-    private MyVector3[] GetAxes(MyQuaternion rotation)
-    {
-        MyVector3[] axes = new MyVector3[3];
-        axes[0] = rotation * MyVector3.right;
-        axes[1] = rotation * MyVector3.up;
-        axes[2] = rotation * MyVector3.forward;
-        return axes;
-    }
+    
 
     private void LateUpdate()
     {

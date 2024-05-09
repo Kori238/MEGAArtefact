@@ -1,4 +1,6 @@
 using MyMathLibrary;
+using System;
+using System.Reflection;
 using UnityEngine;
 
 public class BoundingSphere : BoundingObject
@@ -45,5 +47,14 @@ public class BoundingSphere : BoundingObject
         LateUpdate();
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(worldCenter.ToUnityVector3(), worldRadius);
+    }
+
+    public override float GetRadius(MyVector3 axis)
+    {
+        return 0;
+    }
+    public override MyVector3[] GetAxes(MyQuaternion rotation)
+    {
+        return new MyVector3[0];
     }
 }
