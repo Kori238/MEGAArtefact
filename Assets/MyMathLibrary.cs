@@ -795,9 +795,9 @@ private float Determinant()
         this.w = w;
     }
     public Quaternion ToUnityQuaternion()
-        {
-            return new Quaternion(x, y, z, w); 
-        }
+    {
+        return new Quaternion(x, y, z, w); 
+    }
 
     public MyQuaternion Normalize()
     {
@@ -810,6 +810,75 @@ private float Determinant()
             w /= magnitude;
         }
         return this;
+    }
+
+    public MyVector3 ToEulerAngles()
+    {
+        float qx, qy, qz, qw;
+
+        // Ensure quaternion is normalized
+        float norm = w * w + x * x + y * y + z * z;
+        if (norm > 0.00001f) // Avoid division by zero
+        {
+            qw = w / norm;
+            qx = x / norm;
+            qy = y / norm;
+            qz = z / norm;
+        }
+        else
+        {
+            qw = w;
+            qx = x;
+            qy = y;
+            qz = z;
+        }
+
+        // Calculate Euler angles
+        float test = qx * qy + qz * qw;
+        float ax, ay, az;
+        if (test > 0.499f)
+        {
+            // Singularity at the pole
+            ay = 2 * Mathf.Atan2(qx, qw);
+            az = Mathf.PI / 2;
+            ax = 0;
+        }
+        else if (test < -0.499f)
+        {
+            // Singularity at the pole
+            ay = -2 * Mathf.Atan2(qx, qw);
+            az = -Mathf.PI / 2;
+            ax = 0;
+        }
+        else
+        {
+            ay = Mathf.Atan2(2 * qy * qw - 2 * qx * qz, 1 - 2 * qy * qy - 2 * qz * qz);
+            az = Mathf.Asin(2 * test);
+            ax = Mathf.Atan2(2 * qx * qw - 2 * qy * qz, 1 - 2 * qx * qx - 2 * qz * qz);
+        }
+
+        return new MyVector3(ax, ay, az);
+    }
+
+    public static MyQuaternion FromEulerAngles(MyVector3 eulerAngles)
+    {
+        float x = eulerAngles.x / 2;
+        float y = eulerAngles.y / 2;
+        float z = eulerAngles.z / 2;
+
+        float cx = Mathf.Cos(x);
+        float sx = Mathf.Sin(x);
+        float cy = Mathf.Cos(y);
+        float sy = Mathf.Sin(y);
+        float cz = Mathf.Cos(z);
+        float sz = Mathf.Sin(z);
+
+        return new MyQuaternion(
+            cx * cy * cz + sx * sy * sz,
+            sx * cy * cz - cx * sy * sz,
+            cx * sy * cz + sx * cy * sz,
+            cx * cy * sz - sx * sy * cz
+        );
     }
 
     public static MyQuaternion operator *(MyQuaternion a, MyQuaternion b)
@@ -900,28 +969,28 @@ private float Determinant()
             new UnityEngine.Vector4(0, 0, 0, 1)
         );
     }
-        public static MyQuaternion LookRotation(MyVector3 forward, MyVector3 upwards)
-{
-    // Normalize the forward direction
-    forward = MyVector3.Normalize(forward);
+    public static MyQuaternion LookRotation(MyVector3 forward, MyVector3 upwards)
+    {
+        // Normalize the forward direction
+        forward = MyVector3.Normalize(forward);
 
-    // Calculate the right vector using the cross product of forward and upwards
-    MyVector3 right = MyVector3.Normalize(MyVector3.Cross(upwards, forward));
+        // Calculate the right vector using the cross product of forward and upwards
+        MyVector3 right = MyVector3.Normalize(MyVector3.Cross(upwards, forward));
 
-    // Calculate the up vector using the cross product of forward and right
-    MyVector3 up = MyVector3.Cross(forward, right);
+        // Calculate the up vector using the cross product of forward and right
+        MyVector3 up = MyVector3.Cross(forward, right);
 
-    // Create a rotation matrix from the right, up, and forward vectors
-    MyMatrix4x4 rotationMatrix = new MyMatrix4x4(
-        right.x, right.y, right.z, 0,
-        up.x, up.y, up.z, 0,
-        forward.x, forward.y, forward.z, 0,
-        0, 0, 0, 1
-    );
+        // Create a rotation matrix from the right, up, and forward vectors
+        MyMatrix4x4 rotationMatrix = new MyMatrix4x4(
+            right.x, right.y, right.z, 0,
+            up.x, up.y, up.z, 0,
+            forward.x, forward.y, forward.z, 0,
+            0, 0, 0, 1
+        );
 
-    // Convert the rotation matrix to a quaternion
-    return rotationMatrix.ToQuaternion();
-}
+        // Convert the rotation matrix to a quaternion
+        return rotationMatrix.ToQuaternion();
+    }
 }
     [Serializable]
     public class MyTransform
@@ -952,6 +1021,36 @@ private float Determinant()
         this.gameObject = myGameObject;
         if (children != null) this.children = children;
         this.parent = parent;
+    }
+
+    public MyVector3 forward
+    {
+        get { return rotation * MyVector3.forward;}
+    }
+
+    public MyVector3 backward
+    {
+        get { return rotation * MyVector3.backward; }
+    }
+
+    public MyVector3 up
+    {
+        get { return rotation * MyVector3.up; }
+    }
+
+    public MyVector3 down
+    {
+        get { return rotation * MyVector3.down; }
+    }
+
+    public MyVector3 right
+    {
+        get { return rotation * MyVector3.right; }
+    }
+
+    public MyVector3 left
+    {
+        get { return rotation * MyVector3.left; }
     }
 
     public MyGameObject SetParent(MyGameObject gameObject)
