@@ -12,7 +12,7 @@ public class OBB : BoundingBox
         if (other is OBB otherBox)
         {
             // Calculate the axes of both boxes
-            MyVector3[] axes1 = GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
             MyVector3[] axes2 = other.GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Check for intersection on all axes
@@ -21,13 +21,13 @@ public class OBB : BoundingBox
         else if (other is BoundingSphere)
         {
             BoundingSphere otherSphere = (BoundingSphere)other;
-            MyVector3[] axes = GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes = GetAxes(thisTransform.rotation);
 
             // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
             {
                 float radius = GetRadius(axes[i]);
-                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, otherTransform.GetLocalToWorldMatrix().GetPosition())));
+                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, thisTransform.position)));
                 if (distance > radius + otherSphere.worldRadius)
                     return false;
             }
@@ -36,7 +36,7 @@ public class OBB : BoundingBox
         else if (other is AABB otherAABB)
         {
            // Calculate the axes of this box
-            MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes1 = other.GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Calculate the axes of the AABB
             MyVector3[] axes2 = new MyVector3[] { MyVector3.right, MyVector3.up, MyVector3.forward };
