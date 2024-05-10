@@ -9,6 +9,7 @@ public class MyRigidBody : MonoBehaviour
     public float mass = 1.0f;
     public float drag = 0.0f;
     public float angularDrag = 0.0f;
+    public float gravityMultiplier = 1f;
     public bool useGravity = true;
     public bool isKinematic = false;
 
@@ -31,7 +32,7 @@ public class MyRigidBody : MonoBehaviour
             // Apply gravity
             if (useGravity)
             {
-                force = MyVector3.Add(force, MyVector3.Multiply(MyVector3.Multiply(MyVector3.down, mass), 9.8f));
+                force = MyVector3.Add(force, MyVector3.Multiply(MyVector3.Multiply(MyVector3.down, mass), 9.8f * gravityMultiplier));
             }
 
             // Calculate velocity
