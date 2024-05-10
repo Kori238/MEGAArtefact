@@ -51,10 +51,14 @@ public class BoundingSphere : BoundingObject
 
     public override float GetRadius(MyVector3 axis)
     {
-        return 0;
+        return worldRadius;
     }
     public override MyVector3[] GetAxes(MyQuaternion rotation)
     {
-        return new MyVector3[0];
+        MyVector3[] axes = new MyVector3[3];
+        axes[0] = MyVector3.right;
+        axes[1] = MyVector3.up;
+        axes[2] = MyVector3.forward;
+        return axes;
     }
 }

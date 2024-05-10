@@ -12,8 +12,8 @@ public class OBB : BoundingBox
         if (other is OBB otherBox)
         {
             // Calculate the axes of both boxes
-            MyVector3[] axes1 = GetAxes(thisTransform.rotation);
-            MyVector3[] axes2 = GetAxes(otherTransform.rotation);
+            MyVector3[] axes1 = GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
+            MyVector3[] axes2 = other.GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Check for intersection on all axes
             return IsSeparated(axes1, axes2, this, otherBox) == false;
@@ -21,13 +21,13 @@ public class OBB : BoundingBox
         else if (other is BoundingSphere)
         {
             BoundingSphere otherSphere = (BoundingSphere)other;
-            MyVector3[] axes = GetAxes(thisTransform.rotation);
+            MyVector3[] axes = GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
 
             // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
             {
                 float radius = GetRadius(axes[i]);
-                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, thisTransform.position)));
+                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, otherTransform.GetLocalToWorldMatrix().GetPosition())));
                 if (distance > radius + otherSphere.worldRadius)
                     return false;
             }

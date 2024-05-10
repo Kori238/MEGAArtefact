@@ -47,7 +47,7 @@ public class AABB : BoundingBox
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         MyMatrix4x4 localToWorldMatrix = myTransform.GetLocalToWorldMatrix();
-        localToWorldMatrix = localToWorldMatrix * MyMatrix4x4.NormalizeRotationMatrix(MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix())); //Do not rotate AABB points!!!!!
+        localToWorldMatrix = MyMatrix4x4.NormalizeRotationMatrix(MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix())) * localToWorldMatrix; //Do not rotate AABB points!!!!!
         worldMin = localToWorldMatrix.TransformPoint(min);
         worldMax = localToWorldMatrix.TransformPoint(max);
     }
