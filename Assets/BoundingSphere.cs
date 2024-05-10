@@ -38,7 +38,7 @@ public class BoundingSphere : BoundingObject
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
-        worldCenter = myTransform.GetLocalToWorldMatrix().GetPosition();
+        worldCenter = myTransform.localToWorldMatrix.GetPosition();
         worldRadius = radius * myTransform.scale.Magnitude()/1.732f; //Approximation of root 3
     }
 

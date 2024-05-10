@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 namespace MyMathLibrary
@@ -995,18 +996,48 @@ private float Determinant()
     [Serializable]
     public class MyTransform
 {
-    public MyVector3 position;
-    public MyQuaternion rotation;
-    public MyVector3 scale;
+    [SerializeField] private MyVector3 pos;
+    public MyVector3 position
+    {
+        get {return pos; }
+        set { pos = value; 
+            localToWorldMatrix = GetLocalToWorldMatrix();
+            hasUpdated = true;
+        }
+    }
+
+
+    [SerializeField] private MyQuaternion rot;
+    public MyQuaternion rotation
+    {
+        get {return rot; }
+        set { rot = value; 
+            localToWorldMatrix = GetLocalToWorldMatrix();
+            hasUpdated = true;
+        }
+    }
+
+    [SerializeField] private MyVector3 sca;
+    public MyVector3 scale
+    {
+        get {return sca; }
+        set { sca = value; 
+            localToWorldMatrix = GetLocalToWorldMatrix();
+            hasUpdated = true;
+        }
+    }
+    public MyMatrix4x4 localToWorldMatrix;
+
     public MyGameObject parent;
     public List<MyGameObject> children = new List<MyGameObject>();
     public MyGameObject gameObject;
+    public bool hasUpdated;
 
     public MyTransform(MyGameObject myGameObject = null, List<MyGameObject> children = null, MyGameObject parent = null)
     {
         position = new MyVector3(0, 0, 0);
-        rotation = new MyQuaternion(1, 0, 0, 0); // Identity quaternion
-        scale = new MyVector3(1, 1, 1);
+        rot = new MyQuaternion(1, 0, 0, 0); // Identity quaternion
+        sca = new MyVector3(1, 1, 1);
         this.gameObject = myGameObject;
         if (children != null) this.children = children;
         this.parent = parent;
@@ -1015,37 +1046,43 @@ private float Determinant()
     public MyTransform(MyVector3 position, MyQuaternion rotation, MyVector3 scale, 
         MyGameObject myGameObject = null, List<MyGameObject> children = null, MyGameObject parent = null)
     {
-        this.position = position;
-        this.rotation = rotation;
-        this.scale = scale;
+        this.pos = position;
+        this.rot = rotation;
+        this.sca = scale;
         this.gameObject = myGameObject;
         if (children != null) this.children = children;
         this.parent = parent;
     }
 
+    public void UpdateLocalToWorldMatrix()
+    {
+        localToWorldMatrix = GetLocalToWorldMatrix();
+        hasUpdated = true;
+    }
+
     public MyVector3 forward
     {
-        get { return rotation * MyVector3.forward;}
+        get { return rot * MyVector3.forward;}
     }
 
     public MyVector3 backward
     {
-        get { return rotation * MyVector3.backward; }
+        get { return rot * MyVector3.backward; }
     }
 
     public MyVector3 up
     {
-        get { return rotation * MyVector3.up; }
+        get { return rot * MyVector3.up; }
     }
 
     public MyVector3 down
     {
-        get { return rotation * MyVector3.down; }
+        get { return rot * MyVector3.down; }
     }
 
     public MyVector3 right
     {
-        get { return rotation * MyVector3.right; }
+        get { return rot * MyVector3.right; }
     }
 
     public MyVector3 left
@@ -1069,46 +1106,46 @@ private float Determinant()
 
     public MyMatrix4x4 GetLocalToWorldMatrix()
     {
-        MyMatrix4x4 translationMatrix = MyMatrix4x4.CreateTranslation(position);
-        MyMatrix4x4 rotationMatrix = MyMatrix4x4.CreateRotation(rotation.Normalize());
+        MyMatrix4x4 translationMatrix = MyMatrix4x4.CreateTranslation(pos);
+        MyMatrix4x4 rotationMatrix = MyMatrix4x4.CreateRotation(rot.Normalize());
         rotationMatrix = MyMatrix4x4.NormalizeRotationMatrix(rotationMatrix);
-        MyMatrix4x4 scaleMatrix = MyMatrix4x4.CreateScale(scale);
+        MyMatrix4x4 scaleMatrix = MyMatrix4x4.CreateScale(sca);
 
         MyMatrix4x4 localToWorldMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 
         if (parent != null)
         {
-            localToWorldMatrix = localToWorldMatrix * parent.myTransform.GetLocalToWorldMatrix();
+            localToWorldMatrix = localToWorldMatrix * parent.myTransform.localToWorldMatrix;
         }
 
         return localToWorldMatrix;
     }
 
     public MyMatrix4x4 GetWorldToLocalMatrix()
-    {
-        MyMatrix4x4 localToWorldMatrix = GetLocalToWorldMatrix();
+        {
+        MyMatrix4x4 localToWorldMatrix = GetLocalToWorldMatrix();;
         return localToWorldMatrix.Inverse();
     }
 
     public void Translate(MyVector3 translation)
     {
-        position = MyVector3.Add(position, translation);
+        pos = MyVector3.Add(position, translation);
     }
 
     public void Rotate(MyQuaternion rotation)
     {
-        this.rotation = rotation * this.rotation;
+        rot = rotation * rot;
     }
 
     public void Scale(MyVector3 scale)
     {
-        this.scale = MyVector3.Multiply(this.scale, scale);
+        sca = MyVector3.Multiply(sca, scale);
     }
 
     public void LookAt(MyVector3 target)
     {
-        MyVector3 direction = MyVector3.Normalize(MyVector3.Subtract(target, position));
-        rotation = MyQuaternion.LookRotation(direction, new MyVector3(0, 1, 0));
+        MyVector3 direction = MyVector3.Normalize(MyVector3.Subtract(target, pos));
+        rot = MyQuaternion.LookRotation(direction, new MyVector3(0, 1, 0));
     }
 }
     } 

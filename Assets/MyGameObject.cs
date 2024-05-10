@@ -11,6 +11,7 @@ public class MyGameObject : MonoBehaviour
 
     private void Awake()
     {
+        myTransform.UpdateLocalToWorldMatrix();
         meshFilter = GetComponent<MeshFilter>();
         if (meshFilter == null) return;
         if (originalMesh == null)
@@ -19,26 +20,6 @@ public class MyGameObject : MonoBehaviour
         }
         meshFilter.sharedMesh = Instantiate(originalMesh);
     }
-
-    /*private void OnValidate()
-    {
-        meshFilter = GetComponent<MeshFilter>();
-        meshFilter.mesh = Instantiate(originalMesh);
-        if (Application.isEditor && !Application.isPlaying)
-        {
-            if (meshFilter != null && meshFilter.sharedMesh != null)
-            {
-                if (initialVertices == null)
-                {
-                    initialVertices = meshFilter.sharedMesh.vertices;
-                } else
-                {
-                    TransformMesh();
-                }
-            }
-        }
-    }*/
-
     private void TransformMesh()
     {
         if (meshFilter != null && meshFilter.sharedMesh != null)
@@ -47,8 +28,8 @@ public class MyGameObject : MonoBehaviour
             for (int i = 0; i < vertices.Length; i++)
             {
                 MyVector3 vertex = new MyVector3(originalMesh.vertices[i].x, originalMesh.vertices[i].y, originalMesh.vertices[i].z);
-                if (myTransform.GetLocalToWorldMatrix().IsSingular()) continue;
-                vertex = myTransform.GetLocalToWorldMatrix().TransformPoint(vertex);
+                if (myTransform.localToWorldMatrix.IsSingular()) continue;
+                vertex = myTransform.localToWorldMatrix.TransformPoint(vertex);
                 vertices[i] = vertex.ToUnityVector3(); 
             }
             meshFilter.sharedMesh.SetVertices(vertices);
@@ -56,11 +37,12 @@ public class MyGameObject : MonoBehaviour
             meshFilter.sharedMesh.RecalculateNormals();
             meshFilter.sharedMesh.RecalculateTangents();
         }
+        myTransform.hasUpdated = false;
     }
 
     private void LateUpdate()
     {
-        if (meshFilter != null) TransformMesh();
+        if (meshFilter != null && myTransform.hasUpdated) TransformMesh();
         List<MyGameObject> includes = new List<MyGameObject>();
         foreach (MyGameObject mgo in myTransform.children)
         {
@@ -72,5 +54,10 @@ public class MyGameObject : MonoBehaviour
             if (mgo == null) continue;
             myTransform.children.Add(mgo);
         }
+    }
+
+    private void OnValidate()
+    {
+        myTransform.UpdateLocalToWorldMatrix();
     }
 }

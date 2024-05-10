@@ -33,17 +33,17 @@ public abstract class BoundingObject : MonoBehaviour
         MyTransform thisTransform = GetComponent<MyGameObject>().myTransform;
         MyTransform otherTransform = other.GetComponent<MyGameObject>().myTransform;
 
-        MyVector3 distance = MyVector3.Subtract(thisTransform.GetLocalToWorldMatrix().GetPosition(), otherTransform.GetLocalToWorldMatrix().GetPosition());
+        MyVector3 distance = MyVector3.Subtract(thisTransform.localToWorldMatrix.GetPosition(), otherTransform.localToWorldMatrix.GetPosition());
         MyVector3 direction = MyVector3.Normalize(distance);
 
-        MyVector3[] axes1 = GetAxes(thisTransform.GetLocalToWorldMatrix().GetRotation());
-        MyVector3[] axes2 = other.GetAxes(otherTransform.GetLocalToWorldMatrix().GetRotation());
+        MyVector3[] axes1 = GetAxes(thisTransform.localToWorldMatrix.GetRotation());
+        MyVector3[] axes2 = other.GetAxes(otherTransform.localToWorldMatrix.GetRotation());
 
         // Transform the local axes into world space
         for (int i = 0; i < 3; i++)
         {
-            axes1[i] = thisTransform.GetLocalToWorldMatrix().GetRotation() * axes1[i];
-            axes2[i] = otherTransform.GetLocalToWorldMatrix().GetRotation() * axes2[i];
+            axes1[i] = thisTransform.localToWorldMatrix.GetRotation() * axes1[i];
+            axes2[i] = otherTransform.localToWorldMatrix.GetRotation() * axes2[i];
         }
 
         float minOverlap = float.MaxValue;
@@ -88,8 +88,8 @@ public abstract class BoundingObject : MonoBehaviour
     {
         float r1 = box1.GetRadius(axis);
         float r2 = box2.GetRadius(axis);
-        MyVector3 center1 = box1.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetPosition();
-        MyVector3 center2 = box2.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetPosition();
+        MyVector3 center1 = box1.GetComponent<MyGameObject>().myTransform.localToWorldMatrix.GetPosition();
+        MyVector3 center2 = box2.GetComponent<MyGameObject>().myTransform.localToWorldMatrix.GetPosition();
         float distance = Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(center1, center2)));
         return distance - (r1 + r2);
     }
@@ -104,7 +104,7 @@ public abstract class BoundingBox : BoundingObject
 
     public override float GetRadius(MyVector3 axis)
     {
-        MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.GetLocalToWorldMatrix().GetRotation());
+        MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.localToWorldMatrix.GetRotation());
         MyVector3 boxSize = new MyVector3 (
             this.worldMax.x - this.worldMin.x,
             this.worldMax.y - this.worldMin.y,

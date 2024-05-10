@@ -23,7 +23,7 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        MyMatrix4x4 localMatrix = playerGameObject.myTransform.GetLocalToWorldMatrix();
+        MyMatrix4x4 localMatrix = playerGameObject.myTransform.localToWorldMatrix;
         
         float mouseY = Input.GetAxis("Mouse Y") * Screen.height / (Screen.height + Screen.width);
         MyQuaternion newRotation = localZRotation * new MyQuaternion(mouseY * rotationSpeedZ, MyVector3.right);
