@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     MyRigidBody body;
     BoundingObject thisCollider;
     public float moveSpeed = 5;
+    public float sprintMultiplier = 2;
     public float jumpForce = 10;
     public float rotationSpeed = 5.0f;
     public bool canJump;
@@ -30,7 +31,7 @@ public class Player : MonoBehaviour
             body.myGameObject.myTransform.position = MyVector3.Add(body.myGameObject.myTransform.position, new MyVector3(0, 0.1f, 0));
             body.AddImpulse(new MyMathLibrary.MyVector3(0, jumpForce, 0));
         }
-         float mouseX = Input.GetAxis("Mouse X") * Screen.width / (Screen.height + Screen.width);
+        float mouseX = Input.GetAxis("Mouse X") * Screen.width / (Screen.height + Screen.width);
         RotatePlayer(mouseX);
     
         // Get the forward and right directions in world space
@@ -44,7 +45,12 @@ public class Player : MonoBehaviour
     
         // Normalize the movement direction to prevent faster movement when moving diagonally
         movementDirection = MyVector3.Normalize(movementDirection);
-    
+
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            movementDirection = MyVector3.Multiply(movementDirection, sprintMultiplier);
+        }
+
         // Apply the movement
         body.AddForce(MyVector3.Multiply(movementDirection, moveSpeed));
     }

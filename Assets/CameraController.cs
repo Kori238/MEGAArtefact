@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyMathLibrary;
 
+[ExecuteInEditMode]
 public class CameraController : MonoBehaviour
 {
     MyGameObject playerGameObject;

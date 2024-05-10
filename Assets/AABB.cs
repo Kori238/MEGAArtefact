@@ -47,7 +47,7 @@ public class AABB : BoundingBox
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         MyMatrix4x4 localToWorldMatrix = myTransform.GetLocalToWorldMatrix();
-        localToWorldMatrix = localToWorldMatrix * MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix()); //Do not rotate AABB points!!!!!
+        localToWorldMatrix = localToWorldMatrix * MyMatrix4x4.NormalizeRotationMatrix(MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix())); //Do not rotate AABB points!!!!!
         worldMin = localToWorldMatrix.TransformPoint(min);
         worldMax = localToWorldMatrix.TransformPoint(max);
     }
@@ -57,6 +57,7 @@ public class AABB : BoundingBox
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
         LateUpdate();
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(MyVector3.Lerp(worldMin, worldMax, 0.5f).ToUnityVector3(), myTransform.GetLocalToWorldMatrix().GetScale().ToUnityVector3());
+        MyVector3 size = new MyVector3(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y), Mathf.Abs(max.z - min.z));
+        Gizmos.DrawWireCube(MyVector3.Lerp(worldMin, worldMax, 0.5f).ToUnityVector3(), MyVector3.Multiply(myTransform.GetLocalToWorldMatrix().GetScale(), size).ToUnityVector3());
     }
 }

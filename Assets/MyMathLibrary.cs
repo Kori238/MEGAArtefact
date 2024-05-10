@@ -497,7 +497,7 @@ public static MyMatrix4x4 CreateScale(MyVector3 scale)
     public MyQuaternion GetRotation()
     {
         var rotationMatrix = this.GetRotationMatrix();
-        return NormalizeRotationMatrix(rotationMatrix).ToQuaternion();
+        return rotationMatrix.ToQuaternion();
     }
 
     public void Scale(MyVector3 scale)
@@ -573,7 +573,7 @@ public static MyMatrix4x4 CreateScale(MyVector3 scale)
             new UnityEngine.Vector4(0, 0, 0, 1)
         );
 
-        return rotationMatrix;
+        return NormalizeRotationMatrix(rotationMatrix);
     }
 
     public static MyMatrix4x4 NormalizeRotationMatrix(MyMatrix4x4 matrix)
@@ -1070,7 +1070,7 @@ private float Determinant()
     public MyMatrix4x4 GetLocalToWorldMatrix()
     {
         MyMatrix4x4 translationMatrix = MyMatrix4x4.CreateTranslation(position);
-        MyMatrix4x4 rotationMatrix = MyMatrix4x4.CreateRotation(rotation);
+        MyMatrix4x4 rotationMatrix = MyMatrix4x4.CreateRotation(rotation.Normalize());
         rotationMatrix = MyMatrix4x4.NormalizeRotationMatrix(rotationMatrix);
         MyMatrix4x4 scaleMatrix = MyMatrix4x4.CreateScale(scale);
 
