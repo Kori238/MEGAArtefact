@@ -47,8 +47,10 @@ public class MyRigidBody : MonoBehaviour
 
     private void Update()
     {
-        myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(velocity, Time.deltaTime));
-        myGameObject.myTransform.rotation = myGameObject.myTransform.rotation * new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime));
+        if (velocity.Magnitude() > 0)
+            myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(velocity, Time.deltaTime));
+        if (angularVelocity.Magnitude() > 0)
+            myGameObject.myTransform.rotation = myGameObject.myTransform.rotation * new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime));
         
     }
 

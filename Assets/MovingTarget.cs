@@ -1,39 +1,99 @@
 using MyMathLibrary;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingTarget : MonoBehaviour
 {
-    public MyVector3 max_scale = new MyVector3(3, 3, 3);
-    public MyVector3 min_scale = new MyVector3(1, 1, 1);
-    public float max_height = 5f;
-    public float min_height = -5f;
-    public MyVector3 scaling = new MyVector3(1f, 1f, 1f);
-    public MyVector3 translating = new MyVector3(0, 1f, 0);
+    public MyGameObject myGameObject;
+    public float scalingSpeed = 1f;
+    public float minScale = 0.5f;
+    public float maxScale = 2f;
+    public float translationSpeed = 1f;
+    public MyVector3 minPos = new MyVector3(-5, -5, -5);
+    public MyVector3 maxPos = new MyVector3(5, 5, 5);
+    public bool translateY = true;
+    public bool translateX = true;
+    public bool translateZ = true;
+    public float rotationSpeed = 1f;
+    public float minRotation = -180f;
+    public float maxRotation = 180f;
+    public MyVector3 rotationAxis = new MyVector3(0, 1, 0);
 
-    void Start()
+    private float currentScale = 1f;
+    private MyVector3 currentPosition;
+    private MyQuaternion currentRotation;
+    private int scaleDirection = 1;
+    private int translateXDirection = 1;
+    private int translateYDirection = 1;
+    private int translateZDirection = 1;
+
+    private void Start()
     {
-        
+        myGameObject = GetComponent<MyGameObject>();
+        minPos = MyVector3.Add(minPos, myGameObject.myTransform.position);
+        maxPos = MyVector3.Add(maxPos, myGameObject.myTransform.position);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
-        myTransform.position = MyVector3.Add(myTransform.position, MyVector3.Multiply(translating, Time.deltaTime));
-        myTransform.rotation *= new MyQuaternion(Mathf.PI / 2 * Time.deltaTime, new MyVector3(0, 1, 0)).Normalize();
-        myTransform.scale = MyVector3.Add(myTransform.scale,  MyVector3.Multiply(scaling, Time.deltaTime));
-        if ((myTransform.scale.x > max_scale.x && scaling.x > 0) ||
-            (myTransform.scale.x < min_scale.x && scaling.x < 0))
+        currentPosition = myGameObject.myTransform.position;
+        currentRotation = myGameObject.myTransform.rotation;
+        // Scale
+        currentScale += scalingSpeed * Time.deltaTime * scaleDirection;
+        if (currentScale >= maxScale)
         {
-            scaling = MyVector3.Subtract(new MyVector3(0, 0, 0), scaling);
-        } 
-        if ((myTransform.position.y > max_height && translating.y > 0) ||
-            (myTransform.position.y < min_height && translating.y < 0))
-        {
-            translating = MyVector3.Subtract(new MyVector3(0, 0, 0), translating);
+            scaleDirection = -1;
         }
-        GetComponent<MyGameObject>().myTransform = myTransform;
+        else if (currentScale <= minScale)
+        {
+            scaleDirection = 1;
+        }
+        myGameObject.myTransform.scale = new MyVector3(currentScale, currentScale, currentScale);
+
+        // Translate
+        if (translateX) {
+            currentPosition.x += translationSpeed * Time.deltaTime * translateXDirection;
+            if (currentPosition.x <= minPos.x)
+            {
+                translateXDirection = 1;
+            }
+            else if (currentPosition.x >= maxPos.x)
+            {
+                translateXDirection = -1;
+            }
+        }
+
+        if (translateY) {
+            currentPosition.y += translationSpeed * Time.deltaTime * translateYDirection;
+            Debug.Log(currentPosition.y);
+            if (currentPosition.y <= minPos.y)
+            {
+                translateYDirection = 1;
+            }
+            else if (currentPosition.y >= maxPos.y)
+            {
+                translateYDirection = -1;
+            }
+        }
+
+        if (translateZ) {
+            currentPosition.z += translationSpeed * Time.deltaTime * translateZDirection;
+            if (currentPosition.z <= minPos.z)
+            {
+                translateZDirection = 1;
+            }
+            else if (currentPosition.z >= maxPos.z)
+            {
+                translateZDirection = -1;
+            }
+        }
+
+        myGameObject.myTransform.position = currentPosition;
+
+        // Rotate
+        currentRotation = currentRotation * new MyQuaternion(rotationSpeed * Time.deltaTime, rotationAxis).Normalize();
+        var (angle, axis) = currentRotation.ToAngleAxis();
+        angle = Mathf.Clamp(angle, minRotation, maxRotation);
+        currentRotation = new MyQuaternion(angle, axis).Normalize();
+        myGameObject.myTransform.rotation = currentRotation.Normalize();
     }
 }

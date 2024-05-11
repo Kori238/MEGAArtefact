@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             canJump = false;
-            body.myGameObject.myTransform.position = MyVector3.Add(body.myGameObject.myTransform.position, new MyVector3(0, 0.1f, 0));
+            body.myGameObject.myTransform.position = MyVector3.Add(body.myGameObject.myTransform.position, new MyVector3(0, 0.5f, 0));
             body.AddImpulse(new MyMathLibrary.MyVector3(0, jumpForce, 0));
         }
         float mouseX = Input.GetAxis("Mouse X") * Screen.width / (Screen.height + Screen.width);

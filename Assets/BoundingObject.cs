@@ -21,10 +21,16 @@ public abstract class BoundingObject : MonoBehaviour
             if (obj == this) continue;
             if (!Intersects(obj)) continue;
 
-            MyVector3 collisionNormal = CalculateCollisionNormal(obj);
-            float penetrationDepth = CalculatePenetrationDepth(obj, collisionNormal);
+            MyRigidBody myRigidBody = GetComponent<MyRigidBody>();
 
-            Debug.Log($"Collision between {this.name} and {obj.name}");
+            MyVector3 collisionNormal = MyVector3.zero;
+            float penetrationDepth = 0f;
+
+            if (myRigidBody != null)
+            {
+                collisionNormal = CalculateCollisionNormal(obj);
+                penetrationDepth = CalculatePenetrationDepth(obj, collisionNormal);
+            }
             collisionEvent?.Invoke(obj, collisionNormal, penetrationDepth);
         }
     }
