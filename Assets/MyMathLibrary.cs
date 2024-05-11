@@ -98,6 +98,13 @@ namespace MyMathLibrary
             this.z = z;
         }
 
+        public MyVector3(Vector3 unityVec)
+        {
+            this.x = unityVec.x;
+            this.y = unityVec.y;
+            this.z = unityVec.z;
+        }
+
         public static MyVector3 zero
         {
             get { return new MyVector3(0f, 0f, 0f); }

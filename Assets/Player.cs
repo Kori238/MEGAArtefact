@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public float jumpForce = 10;
     public float rotationSpeed = 5.0f;
     public bool canJump;
+    public GameObject bulletPrefab;
 
     void Start()
     {
@@ -50,11 +51,27 @@ public class Player : MonoBehaviour
         {
             movementDirection = MyVector3.Multiply(movementDirection, sprintMultiplier);
         }
-
-        // Apply the movement
+        if (Input.GetMouseButtonDown(0))
+        {
+            ShootBullet();
+        }
         body.AddForce(MyVector3.Multiply(movementDirection, moveSpeed));
     }
 
+    private void ShootBullet()
+    {
+        GameObject bulletObject = Instantiate(bulletPrefab);
+        MyGameObject bulletGameObject = bulletObject.GetComponent<MyGameObject>();
+        MyVector3 offset = MyVector3.Multiply(new MyVector3(Camera.main.transform.forward), 2f); // Offset by 0.5 units forward
+        bulletGameObject.myTransform.position = MyVector3.Add(new MyVector3(Camera.main.transform.position), offset);
+        Quaternion cameraRotation = Camera.main.transform.rotation;
+        bulletGameObject.myTransform.rotation = new MyQuaternion(cameraRotation.w, cameraRotation.x, cameraRotation.y, cameraRotation.z);
+        Bullet bullet = bulletObject.GetComponent<Bullet>();
+
+        MyVector3 shootDirection = MyVector3.Normalize( new MyVector3(Camera.main.transform.forward));
+        bullet.Shoot(shootDirection);
+    }
+    
     private void RotatePlayer(float mouseX)
     {
         float rotation = mouseX * rotationSpeed * Time.deltaTime;

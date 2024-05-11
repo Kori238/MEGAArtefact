@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 
 public abstract class BoundingObject : MonoBehaviour
 {
+    public bool isTrigger = false;
     public delegate void CollisionEvent(BoundingObject other, MyVector3 collisionNormal, float penetrationDepth);
     public event CollisionEvent collisionEvent;
     public abstract bool Intersects(BoundingObject other);

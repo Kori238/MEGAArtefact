@@ -29,22 +29,17 @@ public class MyRigidBody : MonoBehaviour
     {
         if (!isKinematic)
         {
-            // Apply gravity
             if (useGravity)
             {
                 force = MyVector3.Add(force, MyVector3.Multiply(MyVector3.Multiply(MyVector3.down, mass), 9.8f * gravityMultiplier));
             }
 
-            // Calculate velocity
             velocity = MyVector3.Add(velocity, MyVector3.Multiply(MyVector3.Divide(force, mass), Time.deltaTime));
             velocity = MyVector3.Multiply(velocity, (1 - drag * Time.deltaTime));
 
-            // Calculate angular velocity
             angularVelocity = MyVector3.Add(angularVelocity, MyVector3.Multiply(MyVector3.Divide(torque, mass), Time.deltaTime));
             angularVelocity = MyVector3.Multiply(angularVelocity, (1 - angularDrag * Time.deltaTime));
 
-            // Update position and rotation
-            // Reset forces
             force = MyVector3.zero;
             torque = MyVector3.zero;
         }
@@ -74,21 +69,15 @@ public class MyRigidBody : MonoBehaviour
 
     public void OnBoundingEnter(BoundingObject other, MyVector3 collisionNormal, float penetrationDepth)
     {
+        if (thisCollider.isTrigger || other.isTrigger) return;
         Debug.Log($"CollisionNormal: {collisionNormal} PenetrationDepth: {penetrationDepth}");
-        // Calculate the velocity along the collision normal
         MyVector3 velocityAlongNormal = MyVector3.Multiply(collisionNormal, MyVector3.Dot(collisionNormal, velocity));
-
-        // Calculate the velocity perpendicular to the collision normal
         MyVector3 velocityPerpendicularToNormal = MyVector3.Subtract(velocity, velocityAlongNormal);
 
-        // Apply restitution to the velocity along the collision normal
-        float restitution = 0.3f; // Adjust this value to control the amount of restitution
+        float restitution = 0.3f;
         velocityAlongNormal = MyVector3.Multiply(velocityAlongNormal, -restitution);
 
-        // Combine the velocities to get the new velocity
         velocity = MyVector3.Add(velocityPerpendicularToNormal, velocityAlongNormal);
-
-        // Resolve the collision by modifying the position
         myGameObject.myTransform.position = MyVector3.Add(myGameObject.myTransform.position, MyVector3.Multiply(collisionNormal, penetrationDepth));
         if (MyVector3.Dot(collisionNormal, MyVector3.up) > 0)
         {
