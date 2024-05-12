@@ -1053,6 +1053,7 @@ namespace MyMathLibrary
         {
             foreach (MyGameObject child in this.children)
             {
+                if (child == null) return;
                 child.myTransform.UpdateLocalToWorldMatrix();
             }
         }
@@ -1061,6 +1062,7 @@ namespace MyMathLibrary
         {
             localToWorldMatrix = GetLocalToWorldMatrix();
             hasUpdated = true;
+            UpdateChildren();
         }
 
         public MyVector3 forward

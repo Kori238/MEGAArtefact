@@ -27,7 +27,7 @@ public class OBB : BoundingBox
             for (int i = 0; i < 3; i++)
             {
                 float radius = GetRadius(axes[i]);
-                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, thisTransform.position)));
+                float distance = Math.Abs(MyVector3.Dot(axes[i], MyVector3.Subtract(otherSphere.worldCenter, thisTransform.localToWorldMatrix.GetPosition())));
                 if (distance > radius + otherSphere.worldRadius)
                     return false;
             }
