@@ -9,8 +9,6 @@ public class BoundingSphere : BoundingObject
     public float radius;
     public MyVector3 worldCenter;
     public float worldRadius;
-    
-
     public override bool Intersects(BoundingObject other)
     {
         if (other is OBB)
@@ -29,21 +27,19 @@ public class BoundingSphere : BoundingObject
         }
         return false;
     }
-
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
+        if (!myTransform.hasUpdated) return;
         worldCenter = myTransform.localToWorldMatrix.GetPosition();
         worldRadius = radius * myTransform.scale.Magnitude()/1.732f; //Approximation of root 3
     }
-
     private void OnDrawGizmos()
     {
         LateUpdate();
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(worldCenter.ToUnityVector3(), worldRadius);
     }
-
     public override float GetRadius(MyVector3 axis)
     {
         return worldRadius;

@@ -18,13 +18,12 @@ public class MyRigidBody : MonoBehaviour
     private MyVector3 force = MyVector3.zero;
     private MyVector3 torque = MyVector3.zero;
 
-    private void Start()
+    private void Awake()
     {
         thisCollider = GetComponent<BoundingObject>();
         myGameObject = GetComponent<MyGameObject>();
         thisCollider.collisionEvent += OnBoundingEnter;
     }
-
     private void FixedUpdate()
     {
         if (!isKinematic)
@@ -44,7 +43,6 @@ public class MyRigidBody : MonoBehaviour
             torque = MyVector3.zero;
         }
     }
-
     private void Update()
     {
         if (velocity.Magnitude() > 0)
@@ -53,17 +51,14 @@ public class MyRigidBody : MonoBehaviour
             myGameObject.myTransform.rotation = myGameObject.myTransform.rotation * new MyQuaternion(MyVector3.Multiply(angularVelocity, Time.deltaTime));
         
     }
-
     public void AddForce(MyVector3 force)
     {
         this.force = MyVector3.Add(this.force, force);
     }
-
     public void AddTorque(MyVector3 torque)
     {
         this.torque = MyVector3.Add(this.torque, torque);
     }
-
     public void AddImpulse(MyVector3 impulse)
     {
         velocity = MyVector3.Add(velocity, MyVector3.Divide(impulse, mass));

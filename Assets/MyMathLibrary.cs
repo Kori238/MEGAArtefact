@@ -16,17 +16,14 @@ namespace MyMathLibrary
             this.x = x;
             this.y = y;
         }
-
         public static MyVector2 Add(MyVector2 a, MyVector2 b)
         {
             return new MyVector2(a.x + b.x, a.y + b.y);
         }
-
         public static MyVector2 Subtract(MyVector2 a, MyVector2 b)
         {
             return new MyVector2(a.x - b.x, a.y - b.y);
         }
-
         public float Magnitude()
         {
             return Mathf.Sqrt(x * x + y * y);
@@ -35,22 +32,18 @@ namespace MyMathLibrary
         {
             return new Vector2(x, y);
         }
-
         public static MyVector2 Multiply(MyVector2 a, float scalar)
         {
             return new MyVector2(a.x * scalar, a.y * scalar);
         }
-
         public static MyVector2 Divide(MyVector2 a, float divisor)
         {
             return new MyVector2(a.x / divisor, a.y / divisor);
         }
-
         public static float MagnitudeSquared(MyVector2 a)
         {
             return a.x * a.x + a.y * a.y;
         }
-
         public static MyVector2 Normalize(MyVector2 a)
         {
             float mag = a.Magnitude();
@@ -63,7 +56,6 @@ namespace MyMathLibrary
                 return new MyVector2(0, 0); // Return zero vector if magnitude is zero 
             }
         }
-
         public static float Dot(MyVector2 a, MyVector2 b, bool normalize = false)
         {
             if (normalize)
@@ -73,7 +65,6 @@ namespace MyMathLibrary
             }
             return a.x * b.x + a.y * b.y;
         }
-
         public static MyVector2 FromAngle(float angleRadians)
         {
             return new MyVector2(Mathf.Cos(angleRadians), Mathf.Sin(angleRadians));
@@ -89,67 +80,54 @@ namespace MyMathLibrary
         public float x;
         public float y;
         public float z;
-
         public MyVector3(float x, float y, float z)
         {
             this.x = x;
             this.y = y;
             this.z = z;
         }
-
         public MyVector3(Vector3 unityVec)
         {
             this.x = unityVec.x;
             this.y = unityVec.y;
             this.z = unityVec.z;
         }
-
         public static MyVector3 zero
         {
             get { return new MyVector3(0f, 0f, 0f); }
         }
-
         public static MyVector3 right
         {
             get { return new MyVector3(1f, 0f, 0f); }
         }
-
         public static MyVector3 left
         {
             get { return new MyVector3(-1f, 0f, 0f); }
         }
-
         public static MyVector3 up
         {
             get { return new MyVector3(0f, 1f, 0f); }
         }
-
         public static MyVector3 down
         {
             get { return new MyVector3(0f, -1f, 0f); }
         }
-
         public static MyVector3 forward
         {
             get { return new MyVector3(0f, 0f, 1f); }
         }
-
         public static MyVector3 backward
         {
             get { return new MyVector3(0f, 0f, -1f); }
         }
-
-        // Static Functions
         public static MyVector3 Add(MyVector3 a, MyVector3 b)
         {
             return new MyVector3(a.x + b.x, a.y + b.y, a.z + b.z);
         }
-
         public static MyVector3 Subtract(MyVector3 a, MyVector3 b)
         {
             return new MyVector3(a.x - b.x, a.y - b.y, a.z - b.z);
         }
-
         public static MyVector3 Clamp(MyVector3 value, MyVector3 min, MyVector3 max)
         {
             return new MyVector3(
@@ -162,32 +140,26 @@ namespace MyMathLibrary
         {
             return Mathf.Sqrt(x * x + y * y + z * z);
         }
-
         public Vector3 ToUnityVector3()
         {
             return new Vector3(x, y, z);
         }
-
         public static float MagnitudeSquared(MyVector3 a)
         {
             return a.x * a.x + a.y * a.y + a.z * a.z;
         }
-
         public static MyVector3 Multiply(MyVector3 a, float scalar)
         {
             return new MyVector3(a.x * scalar, a.y * scalar, a.z * scalar);
         }
-
         public static MyVector3 Multiply(MyVector3 a, MyVector3 b)
         {
             return new MyVector3(a.x * b.x, a.y * b.y, a.z * b.z);
         }
-
         public static MyVector3 Divide(MyVector3 a, float divisor)
         {
             return new MyVector3(a.x / divisor, a.y / divisor, a.z / divisor);
         }
-
         public static MyVector3 Normalize(MyVector3 a)
         {
             float mag = a.Magnitude();
@@ -200,7 +172,6 @@ namespace MyMathLibrary
                 return new MyVector3(0, 0, 0); // Return zero vector if magnitude is zero 
             }
         }
-
         public static float Dot(MyVector3 a, MyVector3 b, bool normalize = false)
         {
             if (normalize)
@@ -210,12 +181,10 @@ namespace MyMathLibrary
             }
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
-
         public static float Angle(MyVector2 a)
         {
             return Mathf.Atan2(a.y, a.x);
         }
-
         public static MyVector3 FromEuler(float pitch, float yaw, float roll)
         {
             float cp = Mathf.Cos(pitch);
@@ -231,7 +200,6 @@ namespace MyMathLibrary
                 cp * cy
             );
         }
-
         public static MyVector3 Cross(MyVector3 a, MyVector3 b)
         {
             return new MyVector3(
@@ -240,23 +208,19 @@ namespace MyMathLibrary
                 a.x * b.y - a.y * b.x
             );
         }
-
         public static MyVector3 Lerp(MyVector3 a, MyVector3 b, float t)
         {
             return Add(a, Multiply(Subtract(b, a), t));
         }
-
         public override string ToString()
         {
             return $"{x}, {y}, {z}";
         }
     }
-
     public struct MyMatrix4x4
     {
         private float[,] elements;
-
-        public MyMatrix4x4(UnityEngine.Vector4 column1, UnityEngine.Vector4 column2, UnityEngine.Vector4 column3, UnityEngine.Vector4 column4)
+        public MyMatrix4x4(Vector4 column1, Vector4 column2, Vector4 column3, Vector4 column4)
         {
             elements = new float[4, 4];
 
@@ -280,13 +244,11 @@ namespace MyMathLibrary
             elements[2, 3] = column4.z;
             elements[3, 3] = column4.w;
         }
-
         public float this[int row, int column]
         {
             get { return elements[row, column]; }
             set { elements[row, column] = value; }
         }
-
         public static MyMatrix4x4 identity
         {
             get
@@ -298,7 +260,6 @@ namespace MyMathLibrary
                     new UnityEngine.Vector4(0, 0, 0, 1));
             }
         }
-
         public static MyMatrix4x4 operator *(MyMatrix4x4 a, MyMatrix4x4 b)
         {
             MyMatrix4x4 result = new MyMatrix4x4(
@@ -320,7 +281,6 @@ namespace MyMathLibrary
 
             return result;
         }
-
         public static MyMatrix4x4 CreateTranslation(MyVector3 translation)
         {
             return new MyMatrix4x4(
@@ -330,7 +290,6 @@ namespace MyMathLibrary
                 new Vector4(0, 0, 0, 1)
             );
         }
-
         public static MyMatrix4x4 CreateRotationX(float angle)
         {
             var sin = (float)Math.Sin(angle);
@@ -343,7 +302,6 @@ namespace MyMathLibrary
                 new Vector4(0, 0, 0, 1)
             );
         }
-
         public static MyMatrix4x4 CreateRotationY(float angle)
         {
             var sin = (float)Math.Sin(angle);
@@ -356,7 +314,6 @@ namespace MyMathLibrary
                 new Vector4(0, 0, 0, 1)
             );
         }
-
         public static MyMatrix4x4 CreateRotationZ(float angle)
         {
             var sin = (float)Math.Sin(angle);
@@ -369,13 +326,11 @@ namespace MyMathLibrary
                 new Vector4(0, 0, 0, 1)
             );
         }
-
-        public static MyMatrix4x4 CreateRotationHamilton(MyQuaternion MyQuaternion)
-        {
-            return MyQuaternion.ToMatrix();
-        }
-
         public static MyMatrix4x4 CreateRotation(MyQuaternion q)
+        {
+            return q.Normalize().ToMatrix();
+        }
+        public static MyMatrix4x4 CreateRotationEuler(MyQuaternion q)
         {
             var x = (float)Math.Atan2(2 * (q.w * q.x + q.y * q.z), 1 - 2 * (q.x * q.x + q.y * q.y));
             var y = (float)Math.Asin(2 * (q.w * q.y - q.z * q.x));
@@ -383,7 +338,6 @@ namespace MyMathLibrary
 
             return CreateRotation(new MyVector3(x, y, z));
         }
-
         public static MyMatrix4x4 CreateRotation(MyVector3 euler)
         {
             var cosX = (float)Math.Cos(euler.x);
@@ -400,7 +354,6 @@ namespace MyMathLibrary
                 new Vector4(0, 0, 0, 1)
             );
         }
-
         public static MyMatrix4x4 CreateScale(MyVector3 scale)
         {
             return new MyMatrix4x4(
@@ -424,7 +377,6 @@ namespace MyMathLibrary
             new UnityEngine.Vector4(0, 0, 1, -matrix[3, 2]),
             new UnityEngine.Vector4(0, 0, 0, 1));
         }
-
         public static MyMatrix4x4 InvertRotationMatrix(MyMatrix4x4 matrix)
         {
             MyMatrix4x4 result = new MyMatrix4x4(
@@ -435,7 +387,6 @@ namespace MyMathLibrary
 
             return result;
         }
-
         public static MyMatrix4x4 InvertScalingMatrix(MyMatrix4x4 matrix)
         {
             MyMatrix4x4 result = MyMatrix4x4.identity;
@@ -446,7 +397,6 @@ namespace MyMathLibrary
 
             return result;
         }
-
         public override string ToString()
         {
             var precision = 0.000001f;
@@ -462,7 +412,6 @@ namespace MyMathLibrary
             }
             return sb.ToString();
         }
-
         public void Translate(MyVector3 translation)
         {
             var translationMatrix = new MyMatrix4x4(
@@ -474,24 +423,20 @@ namespace MyMathLibrary
 
             this *= translationMatrix;
         }
-
         public MyVector3 GetPosition()
         {
             return new MyVector3(this[3, 0], this[3, 1], this[3, 2]);
         }
-
         public void Rotate(MyQuaternion rotation)
         {
             var rotationMatrix = rotation.ToMatrix();
             this *= rotationMatrix;
         }
-
         public MyQuaternion GetRotation()
         {
             var rotationMatrix = this.GetRotationMatrix();
             return rotationMatrix.ToQuaternion();
         }
-
         public void Scale(MyVector3 scale)
         {
             var scaleMatrix = new MyMatrix4x4(
@@ -503,7 +448,6 @@ namespace MyMathLibrary
 
             this *= scaleMatrix;
         }
-
         public MyVector3 GetScale()
         {
             return new MyVector3(
@@ -512,31 +456,12 @@ namespace MyMathLibrary
                 new MyVector3(this[0, 2], this[1, 2], this[2, 2]).Magnitude()
             );
         }
-
         public void SetPosition(MyVector3 position)
         {
             this[0, 3] = position.x;
             this[1, 3] = position.y;
             this[2, 3] = position.z;
         }
-
-        public void LookAt(MyVector3 target, MyVector3 up)
-        {
-            var position = GetPosition();
-            var forward = MyVector3.Normalize(MyVector3.Subtract(target, position));
-            var right = MyVector3.Normalize(MyVector3.Cross(forward, up));
-            var upVector = MyVector3.Cross(right, forward);
-
-            var rotationMatrix = new MyMatrix4x4(
-                new UnityEngine.Vector4(right.x, right.y, right.z, 0),
-                new UnityEngine.Vector4(upVector.x, upVector.y, upVector.z, 0),
-                new UnityEngine.Vector4(-forward.x, -forward.y, -forward.z, 0),
-                new UnityEngine.Vector4(0, 0, 0, 1)
-            );
-
-            this *= rotationMatrix;
-        }
-
         public MyVector3 TransformPoint(MyVector3 point)
         {
             var result = new MyVector3(
@@ -547,13 +472,11 @@ namespace MyMathLibrary
 
             return result;
         }
-
         public MyVector3 InverseTransformPoint(MyVector3 point)
         {
             var inverseMatrix = this.Inverse();
             return inverseMatrix.TransformPoint(point);
         }
-
         public MyMatrix4x4 GetRotationMatrix()
         {
             var scale = GetScale();
@@ -567,7 +490,6 @@ namespace MyMathLibrary
 
             return NormalizeRotationMatrix(rotationMatrix);
         }
-
         public static MyMatrix4x4 NormalizeRotationMatrix(MyMatrix4x4 matrix)
         {
             MyVector3 row0 = new MyVector3(matrix[0, 0], matrix[0, 1], matrix[0, 2]);
@@ -592,13 +514,11 @@ namespace MyMathLibrary
 
             return matrix;
         }
-
         public bool IsSingular()
         {
             float det = Determinant();
             return Mathf.Abs(det) < 0.000001f; // Check if determinant is close to zero
         }
-
         private float Determinant()
         {
             var m = this;
@@ -618,7 +538,6 @@ namespace MyMathLibrary
 
             return det;
         }
-
         public MyQuaternion ToQuaternion()
         {
             var m = this;
@@ -661,7 +580,6 @@ namespace MyMathLibrary
 
             return new MyQuaternion(qw, qx, qy, qz);
         }
-
         public MyMatrix4x4 Inverse()
         {
             var matrix = new float[4, 8];
@@ -759,7 +677,6 @@ namespace MyMathLibrary
         public float x;
         public float y;
         public float z;
-
         public MyQuaternion(float angle, MyVector3 axis)
         {
             float halfAngle = angle * 0.5f;
@@ -770,7 +687,6 @@ namespace MyMathLibrary
             y = axis.y * sinHalfAngle;
             z = axis.z * sinHalfAngle;
         }
-
         public MyQuaternion(MyVector3 position)
         {
             w = 1;
@@ -778,7 +694,6 @@ namespace MyMathLibrary
             y = position.y;
             z = position.z;
         }
-
         public MyQuaternion(float w, float x, float y, float z)
         {
             this.x = x;
@@ -790,7 +705,6 @@ namespace MyMathLibrary
         {
             return new Quaternion(x, y, z, w);
         }
-
         public MyQuaternion Normalize()
         {
             float magnitude = (float)Math.Sqrt(x * x + y * y + z * z + w * w);
@@ -803,7 +717,6 @@ namespace MyMathLibrary
             }
             return this;
         }
-
         public (float, MyVector3) ToAngleAxis()
         {
             float angle = 2 * Mathf.Acos(w);
@@ -820,7 +733,6 @@ namespace MyMathLibrary
                 return (angle, new MyVector3(x / s, y / s, z / s));
             }
         }
-
         public MyVector3 ToEulerAngles()
         {
             float qx, qy, qz, qw;
@@ -867,7 +779,6 @@ namespace MyMathLibrary
 
             return new MyVector3(ax, ay, az);
         }
-
         public static MyQuaternion FromEulerAngles(MyVector3 eulerAngles)
         {
             float x = eulerAngles.x / 2;
@@ -888,7 +799,6 @@ namespace MyMathLibrary
                 cx * cy * sz - sx * sy * cz
             );
         }
-
         public static MyQuaternion operator *(MyQuaternion a, MyQuaternion b)
         {
             return new MyQuaternion(
@@ -917,13 +827,11 @@ namespace MyMathLibrary
             result.z = (num8 - num11) * vec.x + (num9 + num10) * vec.y + (1f - (num4 + num5)) * vec.z;
             return result;
         }
-
         public MyQuaternion Inverse()
         {
             float norm = w * w + x * x + y * y + z * z;
             return new MyQuaternion(w / norm, -x / norm, -y / norm, -z / norm);
         }
-
         public static MyQuaternion Slerp(MyQuaternion a, MyQuaternion b, float t)
         {
             float cosHalfTheta = a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z;
@@ -950,7 +858,6 @@ namespace MyMathLibrary
                 wa * a.y + wb * b.y,
                 wa * a.z + wb * b.z);
         }
-
         public MyMatrix4x4 ToMatrix()
         {
             var x = this.x;
@@ -1021,8 +928,8 @@ namespace MyMathLibrary
                 UpdateChildren();
             }
         }
-        public MyMatrix4x4 localToWorldMatrix;
 
+        public MyMatrix4x4 localToWorldMatrix;
         public MyGameObject parent;
         public List<MyGameObject> children = new List<MyGameObject>();
         public MyGameObject gameObject;
@@ -1037,7 +944,6 @@ namespace MyMathLibrary
             if (children != null) this.children = children;
             this.parent = parent;
         }
-
         public MyTransform(MyVector3 position, MyQuaternion rotation, MyVector3 scale,
             MyGameObject myGameObject = null, List<MyGameObject> children = null, MyGameObject parent = null)
         {
@@ -1048,7 +954,6 @@ namespace MyMathLibrary
             if (children != null) this.children = children;
             this.parent = parent;
         }
-
         public void UpdateChildren()
         {
             foreach (MyGameObject child in this.children)
@@ -1057,44 +962,36 @@ namespace MyMathLibrary
                 child.myTransform.UpdateLocalToWorldMatrix();
             }
         }
-
         public void UpdateLocalToWorldMatrix()
         {
             localToWorldMatrix = GetLocalToWorldMatrix();
             hasUpdated = true;
             UpdateChildren();
         }
-
         public MyVector3 forward
         {
             get { return rot * MyVector3.forward; }
         }
-
         public MyVector3 backward
         {
             get { return rot * MyVector3.backward; }
         }
-
         public MyVector3 up
         {
             get { return rot * MyVector3.up; }
         }
-
         public MyVector3 down
         {
             get { return rot * MyVector3.down; }
         }
-
         public MyVector3 right
         {
             get { return rot * MyVector3.right; }
         }
-
         public MyVector3 left
         {
             get { return rotation * MyVector3.left; }
         }
-
         public MyGameObject SetParent(MyGameObject gameObject)
         {
             if (this.parent != null)
@@ -1108,7 +1005,6 @@ namespace MyMathLibrary
             }
             return null;
         }
-
         public MyMatrix4x4 GetLocalToWorldMatrix()
         {
             MyMatrix4x4 translationMatrix = MyMatrix4x4.CreateTranslation(pos);
@@ -1125,32 +1021,22 @@ namespace MyMathLibrary
 
             return localToWorldMatrix;
         }
-
         public MyMatrix4x4 GetWorldToLocalMatrix()
         {
             MyMatrix4x4 localToWorldMatrix = GetLocalToWorldMatrix(); ;
             return localToWorldMatrix.Inverse();
         }
-
         public void Translate(MyVector3 translation)
         {
             pos = MyVector3.Add(position, translation);
         }
-
         public void Rotate(MyQuaternion rotation)
         {
             rot = rotation * rot;
         }
-
         public void Scale(MyVector3 scale)
         {
             sca = MyVector3.Multiply(sca, scale);
         }
-
-        /*public void LookAt(MyVector3 target)
-        {
-            MyVector3 direction = MyVector3.Normalize(MyVector3.Subtract(target, pos));
-            rot = MyQuaternion.LookRotation(direction, new MyVector3(0, 1, 0));
-        }*/
     }
 }

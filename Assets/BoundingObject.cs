@@ -9,11 +9,8 @@ public abstract class BoundingObject : MonoBehaviour
     public delegate void CollisionEvent(BoundingObject other, MyVector3 collisionNormal, float penetrationDepth);
     public event CollisionEvent collisionEvent;
     public abstract bool Intersects(BoundingObject other);
-
     public abstract MyVector3[] GetAxes(MyQuaternion rotation);
-
     public abstract float GetRadius(MyVector3 axis);
-
     private void Update()
     {
         foreach (BoundingObject obj in GameObject.FindObjectsOfType<BoundingObject>())
@@ -34,7 +31,6 @@ public abstract class BoundingObject : MonoBehaviour
             collisionEvent?.Invoke(obj, collisionNormal, penetrationDepth);
         }
     }
-
     private MyVector3 CalculateCollisionNormal(BoundingObject other)
     {
         MyTransform thisTransform = GetComponent<MyGameObject>().myTransform;
@@ -84,13 +80,11 @@ public abstract class BoundingObject : MonoBehaviour
 
         return collisionNormal;
     }
-
     private float CalculatePenetrationDepth(BoundingObject other, MyVector3 collisionNormal)
     {
         float penetrationDepth = IsSeparated(collisionNormal, this, other);
         return Mathf.Abs(penetrationDepth);
     }
-
     private float IsSeparated(MyVector3 axis, BoundingObject box1, BoundingObject box2)
     {
         float r1 = box1.GetRadius(axis);
@@ -108,7 +102,6 @@ public abstract class BoundingBox : BoundingObject
     public MyVector3 max = new MyVector3(0.5f, 0.5f, 0.5f);
     public MyVector3 worldMin;
     public MyVector3 worldMax;
-
     public override float GetRadius(MyVector3 axis)
     {
         MyVector3[] axes = GetAxes(this.GetComponent<MyGameObject>().myTransform.localToWorldMatrix.GetRotation());

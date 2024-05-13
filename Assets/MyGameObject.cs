@@ -8,7 +8,6 @@ public class MyGameObject : MonoBehaviour
     public MyTransform myTransform = new MyTransform();
     private MeshFilter meshFilter;
     public Mesh originalMesh;
-
     private void Awake()
     {
         myTransform.UpdateLocalToWorldMatrix();
@@ -39,7 +38,6 @@ public class MyGameObject : MonoBehaviour
         }
         myTransform.hasUpdated = false;
     }
-
     private void LateUpdate()
     {
         if (meshFilter != null && myTransform.hasUpdated) TransformMesh();
@@ -55,7 +53,6 @@ public class MyGameObject : MonoBehaviour
             myTransform.children.Add(mgo);
         }
     }
-
     private void OnValidate()
     {
         myTransform.UpdateLocalToWorldMatrix();

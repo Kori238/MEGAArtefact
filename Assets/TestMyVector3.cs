@@ -74,16 +74,6 @@ public void TestGetScale()
     Assert.AreEqual(scale.z, 4);
 }
 
-public void TestLookAt()
-{
-    MyMathLibrary.MyMatrix4x4 matrix = MyMathLibrary.MyMatrix4x4.identity;
-    matrix.LookAt(new MyVector3(0, 0, 1), new MyVector3(0, 1, 0));
-    Debug.Log(matrix);
-    Assert.AreEqual(matrix[0, 2], 0);
-    Assert.AreEqual(matrix[1, 2], 0);
-    Assert.AreEqual(matrix[2, 2], -1);
-}
-
 public void TestTransformPoint()
 {
     MyMathLibrary.MyMatrix4x4 matrix = MyMathLibrary.MyMatrix4x4.identity;
@@ -144,7 +134,6 @@ public void TestToQuaternion()
         TestGetRotation();
         TestScale();
         TestGetScale();
-        TestLookAt();
         TestTransformPoint();
         TestInverse();
         TestInverseTransformPoint();

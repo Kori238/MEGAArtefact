@@ -14,15 +14,12 @@ public class OBB : BoundingBox
             // Calculate the axes of both boxes
             MyVector3[] axes1 = GetAxes(thisTransform.localToWorldMatrix.GetRotation());
             MyVector3[] axes2 = other.GetAxes(otherTransform.localToWorldMatrix.GetRotation());
-
             // Check for intersection on all axes
             return IsSeparated(axes1, axes2, this, otherBox) == false;
         }
-        else if (other is BoundingSphere)
+        else if (other is BoundingSphere otherSphere)
         {
-            BoundingSphere otherSphere = (BoundingSphere)other;
             MyVector3[] axes = GetAxes(thisTransform.rotation);
-
             // Check for intersection on all axes
             for (int i = 0; i < 3; i++)
             {
@@ -37,17 +34,14 @@ public class OBB : BoundingBox
         {
            // Calculate the axes of this box
             MyVector3[] axes1 = other.GetAxes(thisTransform.localToWorldMatrix.GetRotation());
-
             // Calculate the axes of the AABB
             MyVector3[] axes2 = new MyVector3[] { MyVector3.right, MyVector3.up, MyVector3.forward };
-
             // Check for intersection on all axes
             return IsSeparated(axes1, axes2, this, otherAABB) == false;
         }
 
         return false;
     }
-
     private bool IsSeparated(MyVector3[] axes1, MyVector3[] axes2, BoundingBox box1, BoundingBox box2)
     {
         // Check for intersection on all axes
@@ -72,7 +66,6 @@ public class OBB : BoundingBox
 
         return false;
     }
-
     private bool IsSeparatedOnAxis(MyVector3 axis, BoundingBox box1, BoundingBox box2)
     {
         float r1 = box1.GetRadius(axis);
@@ -82,17 +75,14 @@ public class OBB : BoundingBox
         float distance = Math.Abs(MyVector3.Dot(axis, MyVector3.Subtract(center1, center2)));
         return distance > r1 + r2;
     }
-
-    
-
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
+        if (!myTransform.hasUpdated) return;
         MyMatrix4x4 localToWorldMatrix = myTransform.localToWorldMatrix;
         worldMin = localToWorldMatrix.TransformPoint(min);
         worldMax = localToWorldMatrix.TransformPoint(max);
     }
-
     private void OnDrawGizmos()
     {
         LateUpdate();

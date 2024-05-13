@@ -42,16 +42,17 @@ public class AABB : BoundingBox
         axes[2] = MyVector3.forward;
         return axes;
     }
-
     private void LateUpdate()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
+        if (!myTransform.hasUpdated) return;
         MyMatrix4x4 localToWorldMatrix = myTransform.localToWorldMatrix;
-        localToWorldMatrix = MyMatrix4x4.NormalizeRotationMatrix(MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix())) * localToWorldMatrix; //Do not rotate AABB points!!!!!
+        localToWorldMatrix = MyMatrix4x4.NormalizeRotationMatrix(
+            MyMatrix4x4.InvertRotationMatrix(localToWorldMatrix.GetRotationMatrix())
+            ) * localToWorldMatrix; //Do not rotate AABB points!!!!!
         worldMin = localToWorldMatrix.TransformPoint(min);
         worldMax = localToWorldMatrix.TransformPoint(max);
     }
-
     private void OnDrawGizmos()
     {
         MyTransform myTransform = GetComponent<MyGameObject>().myTransform;
