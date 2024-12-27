@@ -262,19 +262,17 @@ namespace MyMathLibrary
         }
         public static MyMatrix4x4 operator *(MyMatrix4x4 a, MyMatrix4x4 b)
         {
-            MyMatrix4x4 result = new MyMatrix4x4(
-                new UnityEngine.Vector4(0, 0, 0, 0),
-                new UnityEngine.Vector4(0, 0, 0, 0),
-                new UnityEngine.Vector4(0, 0, 0, 0),
-                new UnityEngine.Vector4(0, 0, 0, 0));
+            var result = new MyMatrix4x4(
+                new Vector4(), new Vector4(), new Vector4(), new Vector4());
 
-            for (int i = 0; i < 4; i++)
+            for (int row = 0; row < 4; row++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int col = 0; col < 4; col++)
                 {
+                    result[row, col] = 0;
                     for (int k = 0; k < 4; k++)
                     {
-                        result[i, j] += a[i, k] * b[k, j];
+                        result[row, col] += a[row, k] * b[k, col];
                     }
                 }
             }
@@ -284,51 +282,47 @@ namespace MyMathLibrary
         public static MyMatrix4x4 CreateTranslation(MyVector3 translation)
         {
             return new MyMatrix4x4(
-                new Vector4(1, 0, 0, translation.x),
-                new Vector4(0, 1, 0, translation.y),
-                new Vector4(0, 0, 1, translation.z),
-                new Vector4(0, 0, 0, 1)
-            );
+                new Vector4(1, 0, 0, 0),
+                new Vector4(0, 1, 0, 0),
+                new Vector4(0, 0, 1, 0),
+                new Vector4(translation.x, translation.y, translation.z, 1));
         }
         public static MyMatrix4x4 CreateRotationX(float angle)
         {
-            var sin = (float)Math.Sin(angle);
-            var cos = (float)Math.Cos(angle);
+            float cos = Mathf.Cos(angle);
+            float sin = Mathf.Sin(angle);
 
             return new MyMatrix4x4(
                 new Vector4(1, 0, 0, 0),
                 new Vector4(0, cos, -sin, 0),
                 new Vector4(0, sin, cos, 0),
-                new Vector4(0, 0, 0, 1)
-            );
+                new Vector4(0, 0, 0, 1));
         }
         public static MyMatrix4x4 CreateRotationY(float angle)
         {
-            var sin = (float)Math.Sin(angle);
-            var cos = (float)Math.Cos(angle);
+            float cos = Mathf.Cos(angle);
+            float sin = Mathf.Sin(angle);
 
             return new MyMatrix4x4(
                 new Vector4(cos, 0, sin, 0),
                 new Vector4(0, 1, 0, 0),
                 new Vector4(-sin, 0, cos, 0),
-                new Vector4(0, 0, 0, 1)
-            );
+                new Vector4(0, 0, 0, 1));
         }
         public static MyMatrix4x4 CreateRotationZ(float angle)
         {
-            var sin = (float)Math.Sin(angle);
-            var cos = (float)Math.Cos(angle);
+            float cos = Mathf.Cos(angle);
+            float sin = Mathf.Sin(angle);
 
             return new MyMatrix4x4(
                 new Vector4(cos, -sin, 0, 0),
                 new Vector4(sin, cos, 0, 0),
                 new Vector4(0, 0, 1, 0),
-                new Vector4(0, 0, 0, 1)
-            );
+                new Vector4(0, 0, 0, 1));
         }
         public static MyMatrix4x4 CreateRotation(MyQuaternion q)
         {
-            return q.Normalize().ToMatrix();
+            return q.ToMatrix();
         }
         public static MyMatrix4x4 CreateRotationEuler(MyQuaternion q)
         {
@@ -340,19 +334,8 @@ namespace MyMathLibrary
         }
         public static MyMatrix4x4 CreateRotation(MyVector3 euler)
         {
-            var cosX = (float)Math.Cos(euler.x);
-            var sinX = (float)Math.Sin(euler.x);
-            var cosY = (float)Math.Cos(euler.y);
-            var sinY = (float)Math.Sin(euler.y);
-            var cosZ = (float)Math.Cos(euler.z);
-            var sinZ = (float)Math.Sin(euler.z);
-
-            return new MyMatrix4x4(
-                new Vector4(cosY * cosZ, sinX * sinY * cosZ - cosX * sinZ, cosX * sinY * cosZ + sinX * sinZ, 0),
-                new Vector4(cosY * sinZ, sinX * sinY * sinZ + cosX * cosZ, cosX * sinY * sinZ - sinX * cosZ, 0),
-                new Vector4(-sinY, sinX * cosY, cosX * cosY, 0),
-                new Vector4(0, 0, 0, 1)
-            );
+            MyQuaternion q = MyQuaternion.FromEulerAngles(euler);
+            return CreateRotation(q);
         }
         public static MyMatrix4x4 CreateScale(MyVector3 scale)
         {
@@ -360,42 +343,35 @@ namespace MyMathLibrary
                 new Vector4(scale.x, 0, 0, 0),
                 new Vector4(0, scale.y, 0, 0),
                 new Vector4(0, 0, scale.z, 0),
-                new Vector4(0, 0, 0, 1)
-            );
+                new Vector4(0, 0, 0, 1));
         }
         public static MyMatrix4x4 InvertTranslationMatrix(MyMatrix4x4 matrix)
         {
-            MyMatrix4x4 result = MyMatrix4x4.identity;
-
-            result[0, 3] = -matrix[0, 3];
-            result[1, 3] = -matrix[1, 3];
-            result[2, 3] = -matrix[2, 3];
-
-            return new MyMatrix4x4(
-            new UnityEngine.Vector4(1, 0, 0, -matrix[3, 0]),
-            new UnityEngine.Vector4(0, 1, 0, -matrix[3, 1]),
-            new UnityEngine.Vector4(0, 0, 1, -matrix[3, 2]),
-            new UnityEngine.Vector4(0, 0, 0, 1));
+            var inverted = identity;
+            inverted[3, 0] = -matrix[3, 0];
+            inverted[3, 1] = -matrix[3, 1];
+            inverted[3, 2] = -matrix[3, 2];
+            return inverted;
         }
         public static MyMatrix4x4 InvertRotationMatrix(MyMatrix4x4 matrix)
         {
-            MyMatrix4x4 result = new MyMatrix4x4(
-                new UnityEngine.Vector4(matrix[0, 0], matrix[1, 0], matrix[2, 0], 0),
-                new UnityEngine.Vector4(matrix[0, 1], matrix[1, 1], matrix[2, 1], 0),
-                new UnityEngine.Vector4(matrix[0, 2], matrix[1, 2], matrix[2, 2], 0),
-                new UnityEngine.Vector4(0, 0, 0, 1));
-
-            return result;
+            var inverted = identity;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    inverted[i, j] = matrix[j, i];
+                }
+            }
+            return inverted;
         }
         public static MyMatrix4x4 InvertScalingMatrix(MyMatrix4x4 matrix)
         {
-            MyMatrix4x4 result = MyMatrix4x4.identity;
-
-            result[0, 0] = 1 / matrix[0, 0];
-            result[1, 1] = 1 / matrix[1, 1];
-            result[2, 2] = 1 / matrix[2, 2];
-
-            return result;
+            return new MyMatrix4x4(
+                new Vector4(1.0f / matrix[0, 0], 0, 0, 0),
+                new Vector4(0, 1.0f / matrix[1, 1], 0, 0),
+                new Vector4(0, 0, 1.0f / matrix[2, 2], 0),
+                new Vector4(0, 0, 0, 1));
         }
         public override string ToString()
         {
